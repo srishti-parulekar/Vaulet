@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from backend.api.models import MoneyVault
+from .models import MoneyVault
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
