@@ -1,9 +1,9 @@
 import React from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import Login from "./pages/Login/Login"
-import Register from "./pages/Register/Register"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
 import Home from "./pages/Home/Home"
-import NotFound from "./pages/NotFound/NotFound"
+import NotFound from "./pages/NotFound"
 import ProtectedRoutes from "./routes/ProtectedRoutes"
 
 function Logout() {
