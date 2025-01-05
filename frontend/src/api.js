@@ -13,7 +13,7 @@ api.interceptors.request.use(
         const token = localStorage.getItem(ACCESS_TOKEN);
         if(token){
             // authorization header created which is auto handled by axios
-            config.headers.Authorization = `Bearer $(token)`
+            config.headers.Authorization = `Bearer ${token}`
         }
         return config
     },

@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 class MoneyVaultSerializer(serializers.ModelSerializer):
     class Meta: 
         model = MoneyVault
-        fields = ["title", "description", "target_amount", "current_amount", "created_at", "author"]
+        fields = ["id", "title", "description", "target_amount", "current_amount", "created_at", "author"]
         extra_kwargs = {"author": {"read_only" : True}}
 
     
