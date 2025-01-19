@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../../api";
 import Vault from "../../components/Vault";
 import "./Home.css"
+import Header from "../../components/Header";
 
 function Home() {
     const [vault, setVault] = useState([]);
@@ -59,71 +60,68 @@ function Home() {
     
     
 
-    return <div>
-        <div>
-            <h2>Vaults</h2>
-            {/* displaying all the notes */}
-            {vault.map((vault) => (
-                <Vault vault={vault} onDelete={deleteVault} key={vault.id} />
+    return (
+        <>
+            <Header />
+            <div>
+                <h2>Vaults</h2>
+                {/* Displaying all the vaults */}
+                {vault.map((vault) => (
+                    <Vault vault={vault} onDelete={deleteVault} key={vault.id} />
                 ))}
 
-            <form onSubmit={createVault}>
+                <form onSubmit={createVault}>
+                    <label htmlFor="title">Title: </label>
+                    <br />
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        required
+                        onChange={(e) => setTitle(e.target.value)}
+                        value={title}
+                    />
+                    <br />
 
-                <label htmlFor="title">Title: </label>
-                <br />
+                    <label htmlFor="description">Tell us about your goal here: </label>
+                    <br />
+                    <textarea
+                        id="description"
+                        name="description"
+                        required
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                    ></textarea>
+                    <br />
 
-                <input type="text"
-                    id="title" name="title"
-                    required
-                    onChange={(e) => setTitle(e.target.value)}
-                    value={title}
-                />
+                    <label htmlFor="target_amount">Target amount: </label>
+                    <br />
+                    <input
+                        type="number"
+                        id="target_amount"
+                        name="target_amount"
+                        required
+                        onChange={(e) => setTargetAmount(e.target.value)}
+                        value={target_amount}
+                    />
+                    <br />
 
-                <br />
+                    <label htmlFor="current_amount">Current amount: </label>
+                    <br />
+                    <input
+                        type="number"
+                        id="current_amount"
+                        name="current_amount"
+                        required
+                        onChange={(e) => setCurrentAmount(e.target.value)}
+                        value={current_amount}
+                    />
+                    <br />
 
-
-                <label htmlFor="description">Tell us about your goal here: </label>
-                <br />
-
-                <textarea
-                    id="description"
-                    name="description"
-                    required
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                ></textarea>
-
-                <br />
-
-                <label htmlFor="target_amount">Target amount: </label>
-                <br />
-
-                <input type="number"
-                    id="target_amount"
-                    name="target_amount"
-                    required
-                    onChange={(e) => setTargetAmount(e.target.value)}
-                    value={target_amount}
-                />
-
-                <br />
-
-                <label htmlFor="current_amount">Current amount: </label>
-                <br />
-
-                <input type="number"
-                    id="current_amount"
-                    name="current_amount"
-                    required
-                    onChange={(e) => setCurrentAmount(e.target.value)}
-                    value={current_amount}
-                />
-
-                <br />
-
-                <input type="submit" value="submit"></input>
-            </form>
-        </div>
-    </div>;
+                    <input type="submit" value="Submit" />
+                </form>
+            </div>
+        </>
+    );
 }
 export default Home;

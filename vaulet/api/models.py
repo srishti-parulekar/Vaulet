@@ -17,3 +17,17 @@ class MoneyVault(models.Model):
 
     def __str__(self):
         return str(self.title)
+    
+
+class Challenge(models.Model):
+    objects = models.Manager()
+
+    title = models.CharField(max_length=50)
+    description = models.TextField()
+    target_amount = models.DecimalField(max_digits=6, decimal_places=2)
+    duration_days = models.IntegerField()  # Duration of the challenge
+    participants = models.ManyToManyField(User, related_name="challenges")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.title)
