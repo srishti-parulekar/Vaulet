@@ -1,0 +1,117 @@
+:root {
+    --artichoke-green: #8F9779;
+    --light-background: #F9F9F9;
+    --text-color: #333;
+    --card-color: #E0E5CE;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    background-color: var(--light-background);
+    color: var(--text-color);
+  }
+  
+  .sidebar {
+    width: 250px;
+    background-color: var(--artichoke-green);
+    padding: 20px;
+    color: white;
+  }
+  
+  .sidebar h1.logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 40px;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    padding: 10px 0;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  .main-content {
+    flex-grow: 1;
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .header input[type="search"] {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--text-color);
+  }
+  
+.account-balance-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  /* margin-top: 10px; */
+  /* align-items: center; */
+  padding: 20px;
+}
+  
+.account-balance {
+    background-color: rgba(92, 192, 72, 0.118); /* Using the same background as the form-container */
+    padding: 20px;
+    border-radius: 8px;
+    flex-grow: 1;
+    min-width: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adding box-shadow for depth */
+  }
+  
+  .balance-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for consistency */
+  }
+  
+  .transaction-history {
+    background-color: rgba(92, 192, 72, 0.118); /* Using the same background as the form-container */
+    padding: 20px;
+    border-radius: 8px;
+    flex-grow: 1;
+    min-width: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+  }
+  
+  .transaction-history table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .transaction-history th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid var(--artichoke-green);
+  }
+  
+  button {
+    background-color: var(--artichoke-green);
+    color: white;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  button:hover {
+    background-color: #3a5a35; /* Darker green on hover */
+    transform: scale(1.05); /* Scale button on hover */
+  }

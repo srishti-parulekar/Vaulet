@@ -19,10 +19,13 @@ class MoneyVaultSerializer(serializers.ModelSerializer):
         extra_kwargs = {"author": {"read_only" : True}}
 
 class ChallengeSerializer(serializers.ModelSerializer):
-    participants = serializers.StringRelatedField(many=True, read_only=True)
+    participants = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True, required=False)
 
     class Meta:
         model = Challenge
-        fields = ["id", "title", "description", "target_amount", "duration_days", "participants", "created_at"]
-        read_only_fields = ["participants", "created_at"]
+        fields = ["id", "title", "description", "start_date", "end_date", "target_amount", "current_amount", "participants"]
 
+    def validate(self, data):
+        if data["start_date"] >= data["end_date"]:
+            raise serializers.ValidationError("End date must be after the start date.")
+        return data

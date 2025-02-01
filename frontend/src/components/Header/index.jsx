@@ -1,29 +1,40 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import wallet from '../../assets/walletNoBG.png';
+import React from "react";
+import { Button } from "@mui/material";
+import { CgMenuGridR } from "react-icons/cg";
+import walletImage from "../../assets/walletNoBG.png";
 import "./Header.css";
-import Button from '@mui/material/Button';
-import { BsMenuButtonWideFill } from "react-icons/bs";
-import Search from '../Search';
-
-const Header = () => {
-    return (
-        <header className="custom-header">
-            <div className="part1">
-                <Link to="/" className="d-flex align-items-center">
-                    <img src={wallet} alt="Wallet Logo" className="wallet" />
-                    <span className="wallet-text">Vault</span>
-                </Link>
-            </div>
-            <div className="part2">
-                <Button className="rounded-circle">
-                    <BsMenuButtonWideFill />
-                </Button>
-                <Search/>
-            </div>
-        </header>
-
-    );
+const Header = ({ handleDrawerOpen }) => {
+  return (
+    <header style={{ zIndex: 100, position: "relative" }}>
+      <nav>
+        <div className="left-nav">
+          <div style={{ paddingTop: "1rem" }}>
+            <Button
+              onClick={handleDrawerOpen}
+              style={{ color: "#ffffff", fontSize: "1.5rem" }}
+            >
+              <CgMenuGridR />
+            </Button>
+          </div>
+          <div className="logo">
+            <img
+              src={walletImage}
+              alt="wallet"
+              style={{ width: "70px", height: "auto" }}
+            />
+            Vaulet
+          </div>
+        </div>
+        <div className="right-nav">
+          <ul className="nav-links">
+            <li>
+              <a>Logout</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+  );
 };
 
 export default Header;
