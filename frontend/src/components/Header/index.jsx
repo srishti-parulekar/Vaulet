@@ -1,11 +1,14 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { Button, Link } from "@mui/material";
 import { CgMenuGridR } from "react-icons/cg";
 import walletImage from "../../assets/walletNoBG.png";
 import "./Header.css";
+import { useNavigate } from "react-router-dom";
 const Header = ({ handleDrawerOpen }) => {
+  const navigate = useNavigate();
   return (
-    <header style={{ zIndex: 100, position: "relative" }}>
+    // style={{ zIndex: 100, position: "relative" }}
+    <header >
       <nav>
         <div className="left-nav">
           <div style={{ paddingTop: "1rem" }}>

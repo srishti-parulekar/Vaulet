@@ -8,16 +8,26 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import './Sidebar.css'; // Import the styles
 
-const Sidebar = ({ open }) => {
+const Sidebar = ({ open, onSelectItem }) => {
   if (!open) return null;
 
+  const handleItemClick = (text) => {
+    if (onSelectItem) {
+      onSelectItem(text);
+    }
+  };
+
   return (
-    <Box sx={{ width: 250, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
-      <List>
+    <Box className="sidebar-container">
+      <List className="sidebar-list">
         {["Personal", "MyVaults", "Create", "Leaderboard"].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton>
+            <ListItemButton 
+              className="sidebar-list-item-button"
+              onClick={() => handleItemClick(text)}
+            >
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
               </ListItemIcon>
@@ -27,10 +37,10 @@ const Sidebar = ({ open }) => {
         ))}
       </List>
       <Divider />
-      <List>
+      <List className="sidebar-list">
         {["All mail", "Trash", "Spam"].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton>
+            <ListItemButton className="sidebar-list-item-button">
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
               </ListItemIcon>

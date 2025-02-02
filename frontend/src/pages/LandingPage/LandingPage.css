@@ -104,6 +104,7 @@
     background: rgba(75, 111, 68, 0.301); /* Green-themed color */
     filter: blur(100px);
     z-index: 0;
+    pointer-events: none;
   }
   
   .bottomBlur {
@@ -168,7 +169,7 @@
   .cta-button {
     background-color: var(--primary-color);
     color: var(--background-color);
-    padding: 1rem 2rem;
+    padding: 1rem 1rem;
     font-size: 1.2rem;
     border: none;
     border-radius: 8px;

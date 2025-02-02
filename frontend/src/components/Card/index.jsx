@@ -69,7 +69,7 @@ const PaymentForm = () => {
           onFocus={handleInputFocus}
           style={inputStyle}
         />
-        <button style={buttonStyle} type="submit">Submit Payment</button>
+        <button className='cta-button' type="submit">Submit Card</button>
       </form>
       </div>
     </div>
@@ -80,11 +80,11 @@ const PaymentForm = () => {
 const containerStyle = {
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
+//   alignItems: 'center',
   maxWidth: '400px',
   margin: '0 auto',
   padding: '20px',
-  borderRadius: '10px',
+  borderRadius: '5px',
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   backgroundColor: '#f9f9f9',
 };
@@ -101,19 +101,10 @@ const inputStyle = {
   padding: '10px',
   borderRadius: '5px',
   border: '1px solid #ccc',
-  fontSize: '14px',
+  fontSize: '16px',
   width: '100%',
 };
 
-const buttonStyle = {
-  padding: '12px',
-  borderRadius: '5px',
-  backgroundColor: '#007bff',
-  color: '#fff',
-  border: 'none',
-  fontSize: '16px',
-  cursor: 'pointer',
-  marginTop: '10px',
-};
+
 
 export default PaymentForm;

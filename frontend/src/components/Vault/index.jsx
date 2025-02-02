@@ -1,22 +1,27 @@
 import React from "react";
 import "./Vault.css";
-function Vault ({vault, onDelete}){
 
-    const formattedDate = new Date(vault.created_at).toLocaleDateString("en-US")
-    //gets rid of additional info like timezone from the date string
+function Vault({ vault, onDelete }) {
+  const formattedDate = new Date(vault.created_at).toLocaleDateString("en-US");
 
-    return <div className="vault-container">
-        <p className="vault-title">{vault.title}</p>
-        <p className="vault-description">{vault.description}</p>
-        <p className="vault-amount">{vault.target_amount}</p>
-        <p className="vault-amount">{vault.current_amount}</p>
-        <p className="vault-date">{formattedDate}</p>
-        <button className="delete-button" onClick={() => onDelete(vault.id)}>
-            Delete
-            </button>
-
+  return (
+    <div className="vault-container">
+      <p className="vault-title" >{vault.title}</p>
+      <p className="vault-description">{vault.description}</p>
+      <div className="vault-amounts">
+        <p className="vault-target-amount">
+          <strong>Target Amount: </strong>${vault.target_amount}
+        </p>
+        <p className="vault-current-amount">
+          <strong>Current Amount: </strong>${vault.current_amount}
+        </p>
+      </div>
+      <p className="vault-date">Created on: {formattedDate}</p>
+      <button className="cta-button" onClick={() => onDelete(vault.id)}>
+        Delete Vault
+      </button>
     </div>
-
+  );
 }
 
 export default Vault;

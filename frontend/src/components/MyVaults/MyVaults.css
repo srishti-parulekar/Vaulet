@@ -1,0 +1,16 @@
+.vault-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+    width: 100%;
+    max-height: calc(100vh - 100px); /* Adjust based on your header height */
+    overflow-y: auto;
+  }
+  
+  /* Remove any margin from vault containers since grid gap will handle spacing */
+  .vault-container {
+    margin: 0 !important; /* Override the margin from Vault.css */
+    width: 100%;
+    max-width: none;
+  }
