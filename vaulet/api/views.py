@@ -1,22 +1,29 @@
-from rest_framework import generics 
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, MoneyVaultSerializer, ChallengeSerializer
-from .models import MoneyVault, Challenge
+from .serializers import (
+    PersonalVaultSerializer,
+    UserSerializer,
+    MoneyVaultSerializer,
+    ChallengeSerializer,
+)
+from .models import MoneyVault, Challenge, PersonalVault
 from rest_framework.response import Response
 from django.utils.timezone import now
+from django.shortcuts import get_object_or_404
+
 
 class MoneyVaultListCreate(generics.ListCreateAPIView):
     serializer_class = MoneyVaultSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        #to get the user that is actually interacting with this view
+        # to get the user that is actually interacting with this view
         user = self.request.user
-        #MoneyVault.objects.all to return all notes 
-        #filter to filter through and return only the ones written by the user
+        # MoneyVault.objects.all to return all notes
+        # filter to filter through and return only the ones written by the user
         return MoneyVault.objects.filter(author=user)
-    
+
     def perform_create(self, serializer):
         if serializer.is_valid():
             serializer.save(author=self.request.user)
@@ -28,19 +35,20 @@ class MoneyVaultDelete(generics.DestroyAPIView):
     serializer_class = MoneyVaultSerializer
     permission_classes = [IsAuthenticated]
 
-    #can only delete vaults the user owns 
+    # can only delete vaults the user owns
     def get_queryset(self):
         user = self.request.user
         return MoneyVault.objects.filter(author=user)
-    
+
 
 class CreateUserView(generics.CreateAPIView):
-    # specifies the list of objects we need to check to not create preexisting user 
+    # specifies the list of objects we need to check to not create preexisting user
     queryset = User.objects.all
-    #tells the data what kind of data we need to accept 
-    serializer_class = UserSerializer 
-    #who can access
+    # tells the data what kind of data we need to accept
+    serializer_class = UserSerializer
+    # who can access
     permission_classes = [AllowAny]
+
 
 class JoinChallengeView(generics.UpdateAPIView):
     serializer_class = ChallengeSerializer
@@ -54,7 +62,10 @@ class JoinChallengeView(generics.UpdateAPIView):
 
         # Check if the user is already a participant to prevent duplicates
         if request.user in challenge.participants.all():
-            return Response({"message": "You are already a participant in this challenge!"}, status=400)
+            return Response(
+                {"message": "You are already a participant in this challenge!"},
+                status=400,
+            )
 
         # Add the current user as a participant
         challenge.participants.add(request.user)
@@ -62,8 +73,9 @@ class JoinChallengeView(generics.UpdateAPIView):
 
         return Response({"message": "You have joined the challenge successfully!"})
 
+
 class ChallengeListCreateView(generics.ListCreateAPIView):
-    
+
     serializer_class = ChallengeSerializer
     permission_classes = [IsAuthenticated]
 
@@ -74,6 +86,7 @@ class ChallengeListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
 
 class ChallengeCompleteView(generics.UpdateAPIView):
     serializer_class = ChallengeSerializer
@@ -86,7 +99,8 @@ class ChallengeCompleteView(generics.UpdateAPIView):
             return Response({"message": "Challenge completed successfully!"})
         else:
             return Response({"message": "Challenge is not completed yet!"})
-        
+
+
 class ChallengeListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
@@ -116,8 +130,47 @@ class ChallengeListView(generics.ListAPIView):
         expired_data = ChallengeSerializer(expired_challenges, many=True).data
 
         # Return a structured response
-        return Response({
-            "active_challenges": active_data,
-            "completed_challenges": completed_data,
-            "expired_challenges": expired_data
-        })
+        return Response(
+            {
+                "active_challenges": active_data,
+                "completed_challenges": completed_data,
+                "expired_challenges": expired_data,
+            }
+        )
+
+
+class PersonalVaultCreateView(generics.UpdateAPIView):
+    serializer_class = PersonalVaultSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return get_object_or_404(PersonalVault, user=self.request.user)
+
+    def put(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            print("Validation errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        personal_vault = self.get_object()
+        serializer.update(personal_vault, serializer.validated_data)
+        
+        return Response(
+            {"message": "Card details successfully set!"}, 
+            status=status.HTTP_200_OK)
+
+
+class PersonalVaultDetailView(generics.RetrieveAPIView):
+    serializer_class = PersonalVaultSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return get_object_or_404(PersonalVault, user=self.request.user)
+
+
+class PersonalVaultUpdateView(generics.UpdateAPIView):
+    serializer_class = PersonalVaultSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return get_object_or_404(PersonalVault, user=self.request.user)

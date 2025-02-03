@@ -7,7 +7,7 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
 import Dashboard from "./pages/Dashboard";
 import LandingPage from "./pages/LandingPage";
-
+import CardDetails from "./pages/CardDetails";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css"
 function Logout() {
@@ -37,6 +37,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/landing" element={<LandingPage />} />
+          <Route path="/carddetails" element={<CardDetails />} />
           <Route path="*" element={<NotFound />} />
 
         </Routes>
