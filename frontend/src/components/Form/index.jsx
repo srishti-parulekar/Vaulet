@@ -15,22 +15,28 @@ function Form({ route, method }) {
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
-
+  
     try {
       const res = await api.post(route, { username, password });
       if (method === "login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        navigate("/");
+        navigate("/carddetails");
       } else {
+        alert("Registration successful! Please login.");
         navigate("/login");
       }
     } catch (error) {
-      alert(error);
+      if (error.response && error.response.data) {
+        alert(`Error: ${error.response.data.detail || "Registration failed"}`);
+      } else {
+        alert("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <>

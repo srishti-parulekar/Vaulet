@@ -6,6 +6,10 @@ import "./Header.css";
 import { useNavigate } from "react-router-dom";
 const Header = ({ handleDrawerOpen }) => {
   const navigate = useNavigate();
+
+  const handleLogout = () =>{
+    navigate("/logout")
+  }
   return (
     // style={{ zIndex: 100, position: "relative" }}
     <header >
@@ -29,11 +33,11 @@ const Header = ({ handleDrawerOpen }) => {
           </div>
         </div>
         <div className="right-nav">
-          <ul className="nav-links">
-            <li>
-              <a>Logout</a>
-            </li>
-          </ul>
+          <div className="nav-links">
+            <Button style={{color: "#ffffff"}} onClick={
+              handleLogout
+            }>Logout</Button>
+          </div>
         </div>
       </nav>
     </header>

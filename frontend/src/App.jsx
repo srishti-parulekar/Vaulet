@@ -26,7 +26,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={
+          <Route path="/home" element={
             <ProtectedRoutes>
               <Home />
             </ProtectedRoutes>
@@ -36,8 +36,8 @@ function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/landing" element={<LandingPage />} />
-          <Route path="/carddetails" element={<CardDetails />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/carddetails" element={<ProtectedRoutes><CardDetails /></ProtectedRoutes>} />
           <Route path="*" element={<NotFound />} />
 
         </Routes>

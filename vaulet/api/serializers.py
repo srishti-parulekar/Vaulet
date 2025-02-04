@@ -69,9 +69,7 @@ class PersonalVaultSerializer(serializers.ModelSerializer):
             "cvc",
         ]
         extra_kwargs = {
-            "expiry": {"write_only": True},
             "user": {"read_only": True},
-            "cvc": {"write_only": True},
             "masked_number": {"read_only": True},
         }
 
