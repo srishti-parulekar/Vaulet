@@ -6,11 +6,13 @@ from .serializers import (
     UserSerializer,
     MoneyVaultSerializer,
     ChallengeSerializer,
+    UserPerformanceSerializer
 )
-from .models import MoneyVault, Challenge, PersonalVault
+from .models import MoneyVault, Challenge, PersonalVault, UserPerformance
 from rest_framework.response import Response
 from django.utils.timezone import now
 from django.shortcuts import get_object_or_404
+from decimal import Decimal
 
 
 class MoneyVaultListCreate(generics.ListCreateAPIView):
@@ -138,6 +140,33 @@ class ChallengeListView(generics.ListAPIView):
             }
         )
 
+class ChallengeContributeView(generics.UpdateAPIView):
+    serializer_class = ChallengeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return get_object_or_404(Challenge, id=self.kwargs['pk'])
+
+    def update(self, request, *args, **kwargs):
+        challenge = self.get_object()
+        amount = request.data.get('amount')
+
+        if not amount:
+            return Response({"error": "Amount is required"}, status=400)
+
+        try:
+            amount = Decimal(amount)
+            challenge.contribute(amount)
+            return Response({
+                "message": "Contribution successful",
+                "current_amount": challenge.current_amount,
+                "target_amount": challenge.target_amount
+            })
+        except ValueError as e:
+            return Response({"error": str(e)}, status=400)
+        except PersonalVault.DoesNotExist:
+            return Response({"error": "Personal vault not found"}, status=400)
+        
 
 class PersonalVaultCreateView(generics.UpdateAPIView):
     serializer_class = PersonalVaultSerializer
@@ -174,3 +203,48 @@ class PersonalVaultUpdateView(generics.UpdateAPIView):
 
     def get_object(self):
         return get_object_or_404(PersonalVault, user=self.request.user)
+    
+class MoneyVaultContributeView(generics.UpdateAPIView):
+    serializer_class = MoneyVaultSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return get_object_or_404(MoneyVault, id=self.kwargs['pk'])
+
+    def update(self, request, *args, **kwargs):
+        vault = self.get_object()
+        amount = request.data.get('amount')
+
+        if not amount:
+            return Response({"error": "Amount is required"}, status=400)
+
+        try:
+            amount = Decimal(amount)
+            personal_vault = request.user.personal_vault
+
+            if personal_vault.balance < amount:
+                return Response({"error": "Insufficient funds"}, status=400)
+
+            personal_vault.balance -= amount
+            vault.balance += amount
+            
+            personal_vault.save()
+            vault.save()
+
+            return Response({
+                "message": "Contribution successful",
+                "vault_balance": vault.balance,
+                "personal_vault_balance": personal_vault.balance
+            })
+        except ValueError as e:
+            return Response({"error": str(e)}, status=400)
+        except PersonalVault.DoesNotExist:
+            return Response({"error": "Personal vault not found"}, status=400)
+
+
+class UserPerformanceView(generics.RetrieveAPIView):
+    serializer_class = UserPerformanceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return UserPerformance.objects.get_or_create(user=self.request.user)[0]

@@ -15,13 +15,23 @@ function Form({ route, method }) {
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
-  
+
     try {
       const res = await api.post(route, { username, password });
       if (method === "login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        navigate("/carddetails");
+
+        // Check if card details are already set
+        const cardRes = await api.get("/api/personal-vault/detail/");
+        const { number, name, expiry, cvc } = cardRes.data;
+
+        // Navigate based on the presence of card details
+        if (!number || !name || !expiry || !cvc) {
+          navigate("/carddetails");
+        } else {
+          navigate("/home"); // Redirect directly if details are already set
+        }
       } else {
         alert("Registration successful! Please login.");
         navigate("/login");
@@ -36,7 +46,6 @@ function Form({ route, method }) {
       setLoading(false);
     }
   };
-  
 
   return (
     <>
@@ -44,7 +53,9 @@ function Form({ route, method }) {
       <div className="bottomBlur"></div>
       <div className="form-div">
         <form onSubmit={handleSubmit} className="form-container">
-            <div className="hero-title--gradient"><h1>{name}</h1></div>
+          <div className="hero-title--gradient">
+            <h1>{name}</h1>
+          </div>
           <input
             className="form-input"
             type="text"
@@ -65,7 +76,6 @@ function Form({ route, method }) {
           </button>
         </form>
       </div>
-      
     </>
   );
 }

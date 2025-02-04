@@ -6,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import api from "../../api";
-
+import "./Personal.css"
 const Personal = () => {
   const [openContributionPopup, setOpenContributionPopup] = useState(false);
   const [contributionAmount, setContributionAmount] = useState("");

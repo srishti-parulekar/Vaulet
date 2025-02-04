@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import MoneyVault, Challenge, PersonalVault
+from .models import MoneyVault, Challenge, PersonalVault, UserPerformance
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -53,6 +53,20 @@ class ChallengeSerializer(serializers.ModelSerializer):
         return data
 
 
+class UserPerformanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPerformance
+        fields = [
+            "total_contributions",
+            "weekly_contributions",
+            "monthly_contributions",
+            "last_challenge_created",
+        ]
+        read_only_fields = (
+            fields  # all fields read-only since they're updated automatically
+        )
+
+
 class PersonalVaultSerializer(serializers.ModelSerializer):
     masked_number = serializers.SerializerMethodField()
 
@@ -76,10 +90,10 @@ class PersonalVaultSerializer(serializers.ModelSerializer):
     def get_masked_number(self, obj):
         """Return masked card number for display"""
         if isinstance(obj, dict):
-            number = obj.get('number')
+            number = obj.get("number")
         else:
             number = obj.number
-        
+
         return f"**** **** **** {number[-4:]}" if number else None
 
     def validate_expiry(self, value):

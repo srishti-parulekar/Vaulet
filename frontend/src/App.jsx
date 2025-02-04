@@ -5,7 +5,6 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
-import Dashboard from "./pages/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import CardDetails from "./pages/CardDetails";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -35,7 +34,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/carddetails" element={<ProtectedRoutes><CardDetails /></ProtectedRoutes>} />
           <Route path="*" element={<NotFound />} />

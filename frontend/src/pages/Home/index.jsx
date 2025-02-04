@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import "./Home.css";
 import Personal from "../../components/Personal";
 import Create from "../../components/Create";
 import MyVaults from "../../components/MyVaults";
-
+import Challenges from "../../components/Challenges";
 function Home() {
   const componentMap = {
     Personal: Personal,
     MyVaults: MyVaults,
     Create: Create,
+    Challenges: Challenges
   };
 
   const [open, setOpen] = useState(true);
