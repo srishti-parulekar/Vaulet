@@ -9,10 +9,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import api from "../../api";
 import "./Challenge.css";
 
-const Challenge = ({ challenge }) => {
+const Challenge = ({ challenge, onContributionSuccess }) => {
   const [open, setOpen] = useState(false);
   const [contributionAmount, setContributionAmount] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -34,20 +35,21 @@ const Challenge = ({ challenge }) => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       const response = await api.put(`/api/challenges/${challenge.id}/contribute/`, {
         amount: parseFloat(contributionAmount)
       });
 
-      // Update the parent component with new challenge data
       if (response.data) {
-        // You might want to trigger a refresh of the challenges list here
-        console.log("Contribution successful:", response.data);
+        handleClose();
+        // Call the parent's refresh function
+        onContributionSuccess();
       }
-      
-      handleClose();
     } catch (error) {
       setError(error.response?.data?.error || "Failed to make contribution");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -59,13 +61,7 @@ const Challenge = ({ challenge }) => {
     <div className="challenge-card">
       <h3>{challenge.title}</h3>
       <p>{challenge.description}</p>
-      <div className="challenge-details">
-        <p>Start Date: {formatDate(challenge.start_date)}</p>
-        <p>End Date: {formatDate(challenge.end_date)}</p>
-        <p>Target Amount: ₹{challenge.target_amount}</p>
-        <p>Current Amount: ₹{challenge.current_amount}</p>
-        <p>Participants: {challenge.participants.length}</p>
-      </div>
+      
       
       <Button 
         variant="contained" 
@@ -80,6 +76,13 @@ const Challenge = ({ challenge }) => {
         <DialogContent>
           <DialogContentText>
             {challenge.description}
+            <div className="challenge-details">
+        <p>Start Date: {formatDate(challenge.start_date)}</p>
+        <p>End Date: {formatDate(challenge.end_date)}</p>
+        <p>Target Amount: ₹{challenge.target_amount}</p>
+        <p>Current Amount: ₹{challenge.current_amount}</p>
+        <p>Participants: {challenge.participants.length}</p>
+      </div>
           </DialogContentText>
           <TextField
             autoFocus
@@ -92,14 +95,20 @@ const Challenge = ({ challenge }) => {
             onChange={handleContributionChange}
             error={!!error}
             helperText={error}
+            disabled={isSubmitting}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleClose} color="primary" disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button onClick={handleContributionSubmit} color="primary" variant="contained">
-            Contribute
+          <Button 
+            onClick={handleContributionSubmit} 
+            color="primary" 
+            variant="contained"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Contributing...' : 'Contribute'}
           </Button>
         </DialogActions>
       </Dialog>
