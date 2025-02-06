@@ -22,7 +22,7 @@ const Sidebar = ({ open, onSelectItem }) => {
   return (
     <Box className="sidebar-container">
       <List className="sidebar-list">
-        {["Personal","Challenges", "MyVaults", "Create", "Leaderboard"].map((text, index) => (
+        {["Personal","Challenges", "MyVaults", "Expenses", "Create"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton 
               className="sidebar-list-item-button"

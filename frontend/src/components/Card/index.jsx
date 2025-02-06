@@ -91,7 +91,7 @@ const Card = () => {
   };
 
   return (
-    <div className="payment-form-container" style={containerStyle}>
+    <div >
       <div className="left-card">
         <Cards
           number={state.number}
@@ -161,8 +161,8 @@ const Card = () => {
           "&:hover": {
             backgroundColor: "rgb(75, 111, 68)", // Slightly darker green on hover
           },
-          marginTop: "2rem",
-          marginInline: "6rem",
+          marginTop: "1rem",
+          marginInline: "4rem",
         }}
       >
         Update Card

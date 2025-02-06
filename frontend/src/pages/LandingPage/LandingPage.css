@@ -64,6 +64,7 @@
     color: var(--text-color);
     background-color: var(--background-color);
     overflow-x:hidden;
+    overflow-y: visible;
   }
   
   .landing-page {
@@ -101,7 +102,7 @@
     top: -128px;
     left: -10vw;
     border-radius: 764px;
-    background: rgba(75, 111, 68, 0.301); /* Green-themed color */
+    background: rgba(75, 111, 68, 0.348); /* Green-themed color */
     filter: blur(100px);
     z-index: 0;
     pointer-events: none;
