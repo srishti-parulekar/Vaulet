@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "tailwind",
     "theme",
     "django_crontab",
+    'django_filters',
 ]
 # CRONJOBS = [
 #     (

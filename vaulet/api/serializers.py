@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import MoneyVault, Challenge, PersonalVault, UserPerformance
+from .models import MoneyVault, Challenge, PersonalVault, UserPerformance, Transaction, Expense
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -66,6 +66,24 @@ class UserPerformanceSerializer(serializers.ModelSerializer):
             fields  # all fields read-only since they're updated automatically
         )
 
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['id', 'user', 'transaction_type', 'amount', 'description', 
+                 'created_at', 'challenge', 'vault']
+        read_only_fields = ['user', 'created_at']
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Expense
+        fields = ['id', 'user', 'name', 'amount', 'category', 'necessity_level',
+                 'date', 'description', 'created_at']
+        read_only_fields = ['user', 'created_at']
+
+    def validate_amount(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Amount must be greater than zero")
+        return value
 
 class PersonalVaultSerializer(serializers.ModelSerializer):
     masked_number = serializers.SerializerMethodField()
@@ -108,3 +126,5 @@ class PersonalVaultSerializer(serializers.ModelSerializer):
         if value < current_month:
             raise serializers.ValidationError("Card expiry must be in the future.")
         return value
+    
+    

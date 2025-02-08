@@ -6,7 +6,9 @@ from .views import (
     PersonalVaultUpdateView,
     UserPerformanceView,
     MoneyVaultContributeView,
-    ChallengeContributeView
+    ChallengeContributeView,
+    TransactionListView,
+    ExpenseListCreateView
 )
 
 urlpatterns = [
@@ -52,4 +54,7 @@ urlpatterns = [
         MoneyVaultContributeView.as_view(),
         name="moneyvault-contribute",
     ),
+    path("transactions/", TransactionListView.as_view(), name="transaction-list"),
+    path("expenses/", ExpenseListCreateView.as_view(), name="expense-list-create"),
+    path("expenses/stats/", ExpenseStatsView.as_view(), name="expense-stats"),
 ]
