@@ -1,6 +1,7 @@
 from django.utils.timezone import now
 from datetime import timedelta
-from .models import Challenge, UserPerformance
+from .models import Challenge
+from api.models import UserPerformance
 from decimal import Decimal
 
 WEEKLY_CHALLENGE_TEMPLATE = {

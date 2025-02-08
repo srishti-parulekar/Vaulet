@@ -73,8 +73,8 @@ INSTALLED_APPS = [
 #     ),  # First day of each month
 # ]
 CRONJOBS = [
-    ('*/5 * * * *', 'api.cron.create_weekly_challenges'),  # Every 5 minutes
-    ('*/10 * * * *', 'api.cron.create_monthly_challenges'),  # Every 10 minutes
+    ('*/5 * * * *', 'challenges.cron.create_weekly_challenges'),  # Every 5 minutes
+    ('*/10 * * * *', 'challenges.cron.create_monthly_challenges'),  # Every 10 minutes
 ]
 TAILWIND_APP_NAME = "theme"
 INTERNAL_IPS = ["127.0.0.1"]
