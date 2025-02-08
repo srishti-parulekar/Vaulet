@@ -14,19 +14,6 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class MoneyVaultSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MoneyVault
-        fields = [
-            "id",
-            "title",
-            "description",
-            "target_amount",
-            "current_amount",
-            "created_at",
-            "author",
-        ]
-        extra_kwargs = {"author": {"read_only": True}}
 
 
 class ChallengeSerializer(serializers.ModelSerializer):
