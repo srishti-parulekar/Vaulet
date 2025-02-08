@@ -1,19 +1,14 @@
-from rest_framework import generics, status, filters
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth.models import User
 from .serializers import (
     PersonalVaultSerializer,
     UserSerializer,
     UserPerformanceSerializer,
-    TransactionSerializer
 )
-from .models import PersonalVault, UserPerformance, Expense, Transaction
+from .models import PersonalVault, UserPerformance
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
-from datetime import datetime, timedelta
-from django.db.models import Sum
-
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -24,7 +19,6 @@ class CreateUserView(generics.CreateAPIView):
     # who can access
     permission_classes = [AllowAny]
 
-      
 
 class PersonalVaultCreateView(generics.UpdateAPIView):
     serializer_class = PersonalVaultSerializer
@@ -69,15 +63,4 @@ class UserPerformanceView(generics.RetrieveAPIView):
 
     def get_object(self):
         return UserPerformance.objects.get_or_create(user=self.request.user)[0]
-
-class TransactionListView(generics.ListAPIView):
-    serializer_class = TransactionSerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['transaction_type', 'challenge', 'vault']
-    ordering_fields = ['created_at', 'amount']
-    ordering = ['-created_at']
-
-    def get_queryset(self):
-        return Transaction.objects.filter(user=self.request.user)
 
