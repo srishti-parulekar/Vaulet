@@ -1,6 +1,6 @@
 :root {
     --artichoke-green: #8F9779;
-    --light-background: #F9F9F9;
+    --light-background: #f9f9f9;
     --text-color: #333;
     --card-color: #E0E5CE;
   }
@@ -55,7 +55,6 @@
 .account-balance-container {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
   width: 100%;
   /* margin-top: 10px; */
   /* align-items: center; */
@@ -117,4 +116,7 @@
   }
 
 
+  .custom-paper {
+    background-color: rgba(51, 212, 22, 0.13) !important;
+  }
   

@@ -21,7 +21,7 @@ const Sidebar = ({ open, onSelectItem }) => {
 
   return (
     <Box className="sidebar-container">
-      <List className="sidebar-list">
+      <List className="sidebar-list" style={{color : "#ffffff"}}>
         {["Personal","Challenges", "MyVaults", "Expenses", "Create"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton 
@@ -31,13 +31,13 @@ const Sidebar = ({ open, onSelectItem }) => {
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={text} sx={{fontSize: "1rem"}} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
-      <Divider />
-      <List className="sidebar-list">
+      <Divider/>
+      <List className="sidebar-list" style={{color : "#ffffff"}}>
         {["All mail", "Trash", "Spam"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton className="sidebar-list-item-button">

@@ -1,7 +1,6 @@
 /* Container for the whole page */
 
 body {
-  font-family: "Playfair Display", sans-serif;
   line-height: 1.6;
   background-color: var(--background-color);
   overflow-x: hidden;

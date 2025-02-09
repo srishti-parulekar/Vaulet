@@ -24,12 +24,12 @@ const Header = ({ handleDrawerOpen }) => {
             </Button>
           </div>
           <div className="logo">
-            <img
+            {/* <img
               src={walletImage}
               alt="wallet"
               style={{ width: "70px", height: "auto" }}
-            />
-            Vaulet
+            /> */}
+            <h5 className="hero-title--gradient" style={{fontSize: "2.5rem", margin: "0.5rem"}}>Vaulet</h5>
           </div>
         </div>
         <div className="right-nav">

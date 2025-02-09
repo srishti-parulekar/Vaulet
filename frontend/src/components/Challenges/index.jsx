@@ -24,9 +24,9 @@ const Challenges = () => {
   return (
     <div
       className="account-balance-container"
-      style={{ display: "flex", flexDirection: "row" }}
+      style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}
     >
-      <div className="account-balance">
+      <div className="account-balance" style={{marginRight: "0.5rem"}}>
         <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
           Active Challenges
         </h2>
@@ -34,7 +34,6 @@ const Challenges = () => {
           style={{
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "rgba(166, 200, 159, 0.19)",
             justifyContent: "center"
           }}
           className="account-balance"

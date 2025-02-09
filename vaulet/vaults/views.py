@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from decimal import Decimal
 from api.models import PersonalVault
+from django.db import transaction
 
 
 class MoneyVaultListCreate(generics.ListCreateAPIView):

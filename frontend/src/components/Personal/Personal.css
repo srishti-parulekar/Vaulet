@@ -2,7 +2,7 @@
     --artichoke-green: #8F9779;
     --light-background: #F9F9F9;
     --text-color: #333;
-    --card-color: #E0E5CE;
+    --card-color: #2c3412;
   }
   
   .dashboard-container {
@@ -55,7 +55,6 @@
 .account-balance-container {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
   width: 100%;
   /* margin-top: 10px; */
   /* align-items: center; */
@@ -63,7 +62,7 @@
 }
   
 .account-balance {
-    padding: 20px;
+  color: #ffd9009d;
     border-radius: 8px;
     flex-grow: 1;
     min-width: 0;
@@ -71,7 +70,7 @@
   }
   
   .balance-card {
-    background-color: white;
+    background-color: rgba(10, 40, 19, 0.287);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;

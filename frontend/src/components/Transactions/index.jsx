@@ -47,15 +47,16 @@ const Transactions = () => {
   return (
 <div className="account-balance-container" style={{display: "flex", flexDirection: "column"}}>
       <h3 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
-        Transactions
+        Your Latest Contributions
       </h3>
+      <div className="account-balance">
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: 440}} >
           <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
+            <TableHead >
+              <TableRow >
                 {columns.map((column) => (
-                  <TableCell key={column.id} style={{ minWidth: column.minWidth }}>
+                  <TableCell key={column.id} sx={{ minWidth: column.minWidth, backgroundColor: "rgb(2, 41, 13)", color: "#ffffff"}}>
                     {column.label}
                   </TableCell>
                 ))}
@@ -65,7 +66,7 @@ const Transactions = () => {
               {transactions.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((transaction) => (
                 <TableRow hover key={transaction.id}>
                   {columns.map((column) => (
-                    <TableCell key={column.id}>
+                    <TableCell key={column.id} sx={{ minWidth: column.minWidth, backgroundColor: "rgb(5, 119, 37)", color: "#ffffff"}}>
                       {column.format && typeof transaction[column.id] === "string"
                         ? column.format(transaction[column.id])
                         : transaction[column.id] || "N/A"}
@@ -86,6 +87,7 @@ const Transactions = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      </div>
     </div>
   )
 }

@@ -5,7 +5,7 @@ function Vault({ vault, onDelete }) {
   const formattedDate = new Date(vault.created_at).toLocaleDateString("en-US");
 
   return (
-    <div className="vault-container">
+    <div className="balance-card">
       <p className="vault-title" >{vault.title}</p>
       <p className="vault-description">{vault.description}</p>
       <div className="vault-amounts">

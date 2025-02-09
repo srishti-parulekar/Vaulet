@@ -84,9 +84,9 @@ const Personal = () => {
     <div className="account-balance-container">
       <section >
         <h3 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
-          My Account & Balance
+          My Personal Vault
         </h3>
-        <div className="balance-card">
+        <div className="account-balance" style={{marginBottom: "1rem"}}>
           <h4>Total Balance</h4>
           <p>${state.balance}</p>
           <p>123-456-7890 | April 2028</p>
