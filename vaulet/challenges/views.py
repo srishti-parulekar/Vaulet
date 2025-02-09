@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from api.models import PersonalVault
 from decimal import Decimal
 from django.utils.timezone import now
+from django.db import transaction
 
 
 class JoinChallengeView(generics.UpdateAPIView):
@@ -48,17 +49,17 @@ class ChallengeListCreateView(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class ChallengeCompleteView(generics.UpdateAPIView):
-    serializer_class = ChallengeSerializer
-    permission_classes = [IsAuthenticated]
+# class ChallengeCompleteView(generics.UpdateAPIView):
+#     serializer_class = ChallengeSerializer
+#     permission_classes = [IsAuthenticated]
 
-    def update(self, request, *args, **kwargs):
-        challenge = self.get_object()
+#     def update(self, request, *args, **kwargs):
+#         challenge = self.get_object()
 
-        if challenge.is_completed():
-            return Response({"message": "Challenge completed successfully!"})
-        else:
-            return Response({"message": "Challenge is not completed yet!"})
+#         if challenge.is_completed():
+#             return Response({"message": "Challenge completed successfully!"})
+#         else:
+#             return Response({"message": "Challenge is not completed yet!"})
 
 
 class ChallengeListView(generics.ListAPIView):
@@ -97,7 +98,6 @@ class ChallengeListView(generics.ListAPIView):
                 "expired_challenges": expired_data,
             }
         )
-
 class ChallengeContributeView(generics.UpdateAPIView):
     serializer_class = ChallengeSerializer
     permission_classes = [IsAuthenticated]
@@ -114,14 +114,62 @@ class ChallengeContributeView(generics.UpdateAPIView):
 
         try:
             amount = Decimal(amount)
+            
+            # Check if contribution would exceed target amount
+            if challenge.current_amount + amount > challenge.target_amount:
+                return Response({
+                    "error": f"Contribution would exceed target amount. Maximum allowed: {challenge.target_amount - challenge.current_amount}"
+                }, status=400)
+                
             challenge.contribute(amount)
             return Response({
                 "message": "Contribution successful",
                 "current_amount": challenge.current_amount,
-                "target_amount": challenge.target_amount
+                "target_amount": challenge.target_amount,
+                "is_completed": challenge.current_amount >= challenge.target_amount
             })
         except ValueError as e:
             return Response({"error": str(e)}, status=400)
         except PersonalVault.DoesNotExist:
             return Response({"error": "Personal vault not found"}, status=400)
-  
+
+class ChallengeRedeemView(generics.UpdateAPIView):
+    serializer_class = ChallengeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return get_object_or_404(Challenge, id=self.kwargs['pk'])
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        challenge = self.get_object()
+        
+        # Verify challenge is completed and not already redeemed
+        if not challenge.current_amount >= challenge.target_amount:
+            return Response({"error": "Challenge not completed yet"}, status=400)
+            
+        if getattr(challenge, 'is_redeemed', False):
+            return Response({"error": "Challenge already redeemed"}, status=400)
+
+        try:
+            # Get user's personal vault
+            vault = PersonalVault.objects.get(user=request.user)
+            
+            # Transfer amount back to vault
+            vault.balance += challenge.current_amount
+            vault.save()
+            
+            # Mark challenge as redeemed
+            challenge.is_redeemed = True
+            challenge.save()
+            
+            return Response({
+                "message": "Challenge amount redeemed successfully",
+                "redeemed_amount": challenge.current_amount,
+                "new_vault_balance": vault.balance
+            })
+            
+        except PersonalVault.DoesNotExist:
+            return Response({"error": "Personal vault not found"}, status=400)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400) 

@@ -25,7 +25,7 @@ class Challenge(models.Model):
     participants = models.ManyToManyField(
         User, related_name="joined_challenges", blank=True
     )  # Many-to-Many field to store participants
-
+    is_redeemed = models.BooleanField(default=False)
     def contribute(self, amount):
         try:
             personal_vault = self.user.personal_vault

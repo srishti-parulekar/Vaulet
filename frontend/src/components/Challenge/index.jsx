@@ -35,6 +35,14 @@ const Challenge = ({ challenge, onContributionSuccess }) => {
       return;
     }
 
+    const amount = parseFloat(contributionAmount);
+    const remainingAmount = challenge.target_amount - challenge.current_amount;
+
+    if (amount > remainingAmount) {
+      setError(`Maximum allowed contribution is ₹${remainingAmount}`);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const response = await api.put(`/api/challenges/${challenge.id}/contribute/`, {
@@ -43,7 +51,6 @@ const Challenge = ({ challenge, onContributionSuccess }) => {
 
       if (response.data) {
         handleClose();
-        // Call the parent's refresh function
         onContributionSuccess();
       }
     } catch (error) {
@@ -53,36 +60,56 @@ const Challenge = ({ challenge, onContributionSuccess }) => {
     }
   };
 
+  const handleRedeem = async () => {
+    setIsSubmitting(true);
+    try {
+      const response = await api.put(`/api/challenges/${challenge.id}/redeem/`);
+      if (response.data) {
+        onContributionSuccess();
+      }
+    } catch (error) {
+      alert(error.response?.data?.error || "Failed to redeem challenge");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const isCompleted = challenge.current_amount >= challenge.target_amount;
   return (
     <div className="challenge-card">
       <h3>{challenge.title}</h3>
       <p>{challenge.description}</p>
-      
-      
-      <Button 
-        variant="contained" 
-        color="primary" 
-        onClick={handleOpen}
-      >
-        Contribute
-      </Button>
+
+
+      {isCompleted ? (
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleRedeem}
+          disabled={isSubmitting || challenge.is_redeemed}
+        >
+          {challenge.is_redeemed ? 'Redeemed' : isSubmitting ? 'Redeeming...' : 'Redeem'}
+        </Button>
+      ) : (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpen}
+          disabled={isSubmitting}
+        >
+          Contribute
+        </Button>
+      )}
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{challenge.title}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {challenge.description}
-            <div className="challenge-details">
-        <p>Start Date: {formatDate(challenge.start_date)}</p>
-        <p>End Date: {formatDate(challenge.end_date)}</p>
-        <p>Target Amount: ₹{challenge.target_amount}</p>
-        <p>Current Amount: ₹{challenge.current_amount}</p>
-        <p>Participants: {challenge.participants.length}</p>
-      </div>
+            Remaining amount to reach target: ₹{challenge.target_amount - challenge.current_amount}
           </DialogContentText>
           <TextField
             autoFocus
@@ -102,9 +129,9 @@ const Challenge = ({ challenge, onContributionSuccess }) => {
           <Button onClick={handleClose} color="primary" disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button 
-            onClick={handleContributionSubmit} 
-            color="primary" 
+          <Button
+            onClick={handleContributionSubmit}
+            color="primary"
             variant="contained"
             disabled={isSubmitting}
           >
