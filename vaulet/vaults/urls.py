@@ -6,12 +6,12 @@ from .views import (
 
 urlpatterns = [
     path(
-        "moneyvaults/<int:pk>/contribute/",
+        "<int:pk>/contribute/",
         MoneyVaultContributeView.as_view(),
         name="moneyvault-contribute",
     ),
-    path("vault/", views.MoneyVaultListCreate.as_view(), name="vaults-list"),
+    path("check/", views.MoneyVaultListCreate.as_view(), name="vaults-list"),
     path(
-        "vault/delete/<int:pk>/", views.MoneyVaultDelete.as_view(), name="delete-vault"
+        "delete/<int:pk>/", views.MoneyVaultDelete.as_view(), name="delete-vault"
     ),
 ]

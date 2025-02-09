@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import PersonalVault, UserPerformance, Transaction, Expense
+from .models import Expense
 
 class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
