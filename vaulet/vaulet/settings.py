@@ -61,6 +61,10 @@ INSTALLED_APPS = [
     "theme",
     "django_crontab",
     'django_filters',
+    'challenges',
+    'transactions',
+    'expenses',
+    'vaults',
 ]
 # CRONJOBS = [
 #     (

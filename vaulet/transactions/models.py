@@ -1,7 +1,8 @@
 from pickle import TRUE
 from django.db import models
 from django.contrib.auth.models import User
-
+from challenges.models import Challenge
+from vaults.models import MoneyVault
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('CHALLENGE_CONTRIBUTION', 'Challenge Contribution'),
@@ -17,8 +18,8 @@ class Transaction(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     # Optional foreign keys to related models
-    challenge = models.ForeignKey('Challenge', on_delete=models.SET_NULL, null=True, blank=True)
-    vault = models.ForeignKey('MoneyVault', on_delete=models.SET_NULL, null=True, blank=True)
+    challenge = models.ForeignKey(Challenge, on_delete=models.SET_NULL, null=True, blank=True)
+    vault = models.ForeignKey(MoneyVault, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.transaction_type} - {self.amount}"
