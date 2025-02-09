@@ -12,7 +12,7 @@ const MyVaults = () => {
 
   const getVaults = () => {
     api
-      .get("/api/vault/")
+      .get("/api/vault/check/")
       .then((res) => setVault(res.data))
       .catch((err) => alert(err));
   };

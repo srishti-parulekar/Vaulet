@@ -3,12 +3,12 @@ from api.models import PersonalVault
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 
-
 CHALLENGE_TYPE_CHOICES = [
     ('WEEKLY', 'Weekly'),
     ('MONTHLY', 'Monthly'),
     ('CUSTOM', 'Custom'),
 ]
+
 class Challenge(models.Model):
     objects = models.Manager()
     challenge_type = models.CharField(max_length=10, choices=CHALLENGE_TYPE_CHOICES, default='CUSTOM')

@@ -11,14 +11,14 @@ const Create = () => {
   
   const getVaults = () => {
     api
-      .get("/api/vault/")
+      .get("/api/vault/check/")
       .then((res) => setVault(res.data))
       .catch((err) => alert(err));
   };
   const createVault = (e) => {
     e.preventDefault();
     api
-      .post("/api/vault/", {
+      .post("/api/vault/check/", {
         description,
         title,
         target_amount,
