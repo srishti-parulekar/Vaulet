@@ -6,6 +6,6 @@ from .views import (
 
 urlpatterns = [
 
-    path("all/", TransactionListView.as_view(), name="transaction-list"),
+    path("check/", TransactionListView.as_view(), name="transaction-list"),
 
 ]

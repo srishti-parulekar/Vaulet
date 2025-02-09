@@ -15,7 +15,7 @@ class MoneyVault(models.Model):
 
     # one user can have money moneyVaults. if user deleted, all its vaults deleted
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vaults")
-
+    is_redeemed = models.BooleanField(default=False)
     def contribute(self, amount):
         """Method to handle contribution to a vault."""
         # first we check the amount in the users personal vault to be sufficient

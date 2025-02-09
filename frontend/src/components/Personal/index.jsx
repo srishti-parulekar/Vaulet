@@ -7,48 +7,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import api from "../../api";
 import "./Personal.css"
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
+import Transactions from "../Transactions";
 
-const columns = [
-  { id: "name", label: "Name", minWidth: 170 },
-  { id: "code", label: "ISO Code", minWidth: 100 },
-  {
-    id: "population",
-    label: "Population",
-    minWidth: 170,
-    align: "right",
-    format: (value) => value.toLocaleString("en-US"),
-  },
-  {
-    id: "size",
-    label: "Size (km²)",
-    minWidth: 170,
-    align: "right",
-    format: (value) => value.toLocaleString("en-US"),
-  },
-
-];
-
-function createData(name, code, population, size) {
-  return { name, code, population, size };
-}
-
-const rows = [
-  createData("India", "IN", 1324171354, 3287263),
-  createData("China", "CN", 1403500365, 9596961),
-  createData("United States", "US", 327167434, 9833520),
-];
 
 const Personal = () => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [openContributionPopup, setOpenContributionPopup] = useState(false);
   const [contributionAmount, setContributionAmount] = useState("");
@@ -59,14 +21,7 @@ const Personal = () => {
     cvc: "",
     name: "",
   });
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
   const handleOpenContributionPopup = () => {
     setOpenContributionPopup(true);
   };
@@ -127,7 +82,7 @@ const Personal = () => {
 
   return (
     <div className="account-balance-container">
-      <section className="account-balance" style={{ minHeight: "500px" }}>
+      <section >
         <h3 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
           My Account & Balance
         </h3>
@@ -180,50 +135,7 @@ const Personal = () => {
       </section>
 
       {/* Popup for Card Update */}
-      <section className="account-balance">
-      <h3 className="hero-title--gradient" style={{fontSize: "2rem"}}>Transactions</h3>
-      <section className="transaction-history">
-          
-          <Paper sx={{ width: "100%", overflow: "hidden" }}>
-            <TableContainer sx={{ maxHeight: 440 }}>
-              <Table stickyHeader aria-label="sticky table">
-                <TableHead>
-                  <TableRow>
-                    {columns.map((column) => (
-                      <TableCell key={column.id} style={{ minWidth: column.minWidth }}>
-                        {column.label}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-                    <TableRow hover key={row.code}>
-                      {columns.map((column) => (
-                        <TableCell key={column.id}>
-                          {column.format && typeof row[column.id] === "number"
-                            ? column.format(row[column.id])
-                            : row[column.id] || "N/A"}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              rowsPerPageOptions={[10, 25, 100]}
-              component="div"
-              count={rows.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </Paper>
-        </section>
-        
-      </section>
+            <div><Transactions/></div>
     </div>
   );
 };

@@ -63,6 +63,7 @@
 }
   
 .account-balance {
+    background-color: rgba(92, 192, 72, 0.118); /* Using the same background as the form-container */
     padding: 20px;
     border-radius: 8px;
     flex-grow: 1;

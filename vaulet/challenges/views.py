@@ -63,6 +63,7 @@ class ChallengeListCreateView(generics.ListCreateAPIView):
 
 
 class ChallengeListView(generics.ListAPIView):
+    
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -98,6 +99,8 @@ class ChallengeListView(generics.ListAPIView):
                 "expired_challenges": expired_data,
             }
         )
+
+
 class ChallengeContributeView(generics.UpdateAPIView):
     serializer_class = ChallengeSerializer
     permission_classes = [IsAuthenticated]
@@ -139,7 +142,13 @@ class ChallengeRedeemView(generics.UpdateAPIView):
 
     def get_object(self):
         return get_object_or_404(Challenge, id=self.kwargs['pk'])
+    
+    # ensures that all the operations within the decorated method 
+    # execute within a single database transaction.
 
+    #If any operation within the method fails or an exception is raised, 
+    # all changes made during that transaction are rolled back, leaving the 
+    # database in its previous state.
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         challenge = self.get_object()

@@ -73,3 +73,45 @@ class MoneyVaultContributeView(generics.UpdateAPIView):
         except PersonalVault.DoesNotExist:
             return Response({"error": "Personal vault not found"}, status=400)
 
+
+class MoneyVaultRedeemView(generics.UpdateAPIView):
+    serializer_class = MoneyVaultSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return get_object_or_404(MoneyVault, id=self.kwargs['pk'])
+    
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        vault = self.get_object()
+
+        #make sure vault hasnt been redeemed and is completed already. 
+        if not vault.current_amount >= vault.target_amount:
+            return Response({"error" : """Vault hasnt been completed yet!
+                             Delete the vault to reinstate the balance into your personal vault."""})
+        
+        if getattr(vault, "is_redeemed", False):
+            return Response({"error" : "Vault has already been redeemed!"})
+        
+        try:
+            #get users personal vault
+            personal_vault = PersonalVault.objects.get(user=request.user)
+
+            #updating the personal vault with redeeming value
+            personal_vault.balance += vault.current_amount
+            personal_vault.save()
+
+            #marking the vault as redeemed 
+            vault.is_redeemed = True
+            vault.save()
+
+            return Response({
+                "message" : "Vault has been redeemed successfully",
+                "redeemed_amount" : vault.current_amount,
+                "new_personal_vault_balance" : personal_vault.balance })
+        
+        except PersonalVault.DoesNotExist:
+            return Response({"error" : "Personal vault not found"},
+                            status=400)
+        except Exception as e: 
+            return Response({"error": str(e)}, status=400)
