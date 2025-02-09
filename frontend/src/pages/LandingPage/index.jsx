@@ -18,11 +18,11 @@ const LandingPage = () => {
   return (
     <div className="landing-page">
       <header>
-        <nav>
+        <nav style={{padding: "0.65rem"}}>
           <div className="logo">
-            <img src={walletImage} alt="wallet"
-            style={{ width: "70px", height: "auto"}}/>
-            Vaulet</div>
+            {/* <img src={walletImage} alt="wallet"
+            style={{ width: "70px", height: "auto"}}/> */}
+            <h3 className="hero-title--gradient" style={{fontSize: "2rem"}}>Vaulet</h3></div>
           <ul className="nav-links">
             <li>
               <a href="#features">Features</a>
@@ -34,7 +34,7 @@ const LandingPage = () => {
               <a href="#testimonials">Testimonials</a>
             </li>
             <li>
-              <a onClick={handleLoginSubmit} style={{color: "white"}}>Login</a>
+              <a onClick={handleLoginSubmit} style={{color: "#394b3c"}}>LOGIN</a>
             </li>
           </ul>
         </nav>
@@ -44,17 +44,18 @@ const LandingPage = () => {
         <div className="topBlur"></div>
         <div className="bottomBlur"></div>
         <section className="hero">
-          <h1 className="hero-title">
-            Make savings fun with,
-            <br />
-            <span className="hero-title--gradient"> Vaulet.</span>
-          </h1>
+  <h1 className="hero-title">
+    Make savings fun with,
+    <br />
+    <span className="hero-title--gradient">Vaulet.</span>
+  </h1>
+  <p className="hero-subtitle">
+    Gamify your budgeting process and achieve your financial goals.
+  </p>
+  <button className="cta-button" onClick={handleRegisterSubmit}>Get Started</button>
+  {/* <div className="bottom-fade"></div> */}
+</section>
 
-          <p className="hero-subtitle">
-            Gamify your budgeting process and achieve your financial goals.
-          </p>
-          <button className="cta-button" onClick={handleRegisterSubmit} >Get Started</button>
-        </section>
 
         <section id="features" className="features">
           <h1 className="titles">Key Features</h1>

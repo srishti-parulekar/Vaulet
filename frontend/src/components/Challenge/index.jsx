@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -97,7 +96,7 @@ const Challenge = ({ challenge, onContributionSuccess }) => {
       ) : (
         <Button
           variant="contained"
-          color="primary"
+          style={{backgroundColor: "rgb(60, 72, 21)"}}
           onClick={handleOpen}
           disabled={isSubmitting}
         >
@@ -106,41 +105,41 @@ const Challenge = ({ challenge, onContributionSuccess }) => {
       )}
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{challenge.title}</DialogTitle>
+        <DialogTitle className="hero-title--gradient">{challenge.title}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Remaining amount to reach target: ₹{challenge.target_amount - challenge.current_amount}
           </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Contribution Amount (₹)"
-            type="number"
-            fullWidth
-            variant="outlined"
-            value={contributionAmount}
-            onChange={handleContributionChange}
-            error={!!error}
-            helperText={error}
-            disabled={isSubmitting}
-          />
+          <form onSubmit={handleContributionSubmit} style={formStyle}>
+                        <TextField
+                          label="Contribution Amount (₹)"
+                          fullWidth
+                          type="number"
+                          variant="outlined"
+                          value={contributionAmount}
+                          onChange={(e) => setContributionAmount(e.target.value)}
+                          required
+                          error={!!error}
+                          helperText={error}
+                          disabled={isSubmitting}
+                        />
+                        <button variant="contained" type="submit" onClick={handleContributionSubmit} disabled={isSubmitting}>
+                        {isSubmitting ? 'Contributing...' : 'Save'}
+                      </button>
+                      </form>
+
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary" disabled={isSubmitting}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleContributionSubmit}
-            color="primary"
-            variant="contained"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Contributing...' : 'Contribute'}
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   );
+};
+
+const formStyle = {
+  marginTop: "20px",
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
+  gap: "10px",
 };
 
 export default Challenge;

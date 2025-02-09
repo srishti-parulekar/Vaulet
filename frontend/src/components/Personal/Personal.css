@@ -2,7 +2,7 @@
     --artichoke-green: #8F9779;
     --light-background: #F9F9F9;
     --text-color: #333;
-    --card-color: #2c3412;
+    --card-color: rgb(44, 52, 18);
   }
   
   .dashboard-container {
