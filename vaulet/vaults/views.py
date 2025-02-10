@@ -59,14 +59,14 @@ class MoneyVaultContributeView(generics.UpdateAPIView):
                 return Response({"error": "Insufficient funds"}, status=400)
 
             personal_vault.balance -= amount
-            vault.balance += amount
+            vault.current_amount += amount
             
             personal_vault.save()
             vault.save()
 
             return Response({
                 "message": "Contribution successful",
-                "vault_balance": vault.balance,
+                "vault_balance": vault.current_amount,
                 "personal_vault_balance": personal_vault.balance
             })
         except ValueError as e:

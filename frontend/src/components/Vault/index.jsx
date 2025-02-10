@@ -9,7 +9,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import api from "../../api";
 
-function Vault({ vault, onDelete }) {
+function Vault({ vault, onDelete, onUpdate }) {
   const formattedDate = new Date(vault.created_at).toLocaleDateString("en-US");
   const [open, setOpen] = useState(false);
   const [contributionAmount, setContributionAmount] = useState("");
@@ -52,7 +52,7 @@ function Vault({ vault, onDelete }) {
 
       if (response.data) {
         handleClose();
-        onContributionSuccess();
+        onUpdate(); // Call the parent's update function
       }
     } catch (error) {
       setError(error.response?.data?.error || "Failed to make contribution");
@@ -66,7 +66,7 @@ function Vault({ vault, onDelete }) {
     try {
       const response = await api.put(`/api/vault/${vault.id}/redeem/`);
       if (response.data) {
-        onContributionSuccess();
+        onUpdate(); // Call the parent's update function
       }
     } catch (error) {
       alert(error.response?.data?.error || "Failed to redeem vault");
@@ -75,18 +75,14 @@ function Vault({ vault, onDelete }) {
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString();
-  };
-
   const isCompleted = vault.current_amount >= vault.target_amount;
 
   return (
     <div className="account-balance">
-      <div style={{display: "flex", justifyContent: "space-between"}}>
-      <p className="vault-title" style={{paddingTop: "0.2rem"}}>{vault.title}</p>
-      <button style={{fontSize: "1.5rem", background: "none"}} onClick={() => onDelete(vault.id)}>
-        <MdOutlineDeleteOutline />
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <p className="vault-title" style={{ paddingTop: "0.2rem" }}>{vault.title}</p>
+        <button style={{ fontSize: "1.5rem", background: "none" }} onClick={() => onDelete(vault.id)}>
+          <MdOutlineDeleteOutline />
         </button>
       </div>
       <p className="vault-description">{vault.description}</p>
@@ -99,25 +95,26 @@ function Vault({ vault, onDelete }) {
         </p>
       </div>
       <p className="vault-date">Created on: {formattedDate}</p>
-      {isCompleted ? (
-        <Button
-          variant="contained"
-          color="success"
-          onClick={handleRedeem}
-          disabled={isSubmitting || vault.is_redeemed}
-        >
-          {vault.is_redeemed ? 'Redeemed' : isSubmitting ? 'Redeeming...' : 'Redeem'}
-        </Button>
-      ) : (
-        <Button
-          variant="contained"
-          style={{backgroundColor: "rgb(60, 72, 21)"}}
-          onClick={handleOpen}
-          disabled={isSubmitting}
-        >
-          Contribute
-        </Button>
-      )}
+      {isCompleted && !vault.is_redeemed ? (
+  <Button
+    variant="contained"
+    color="success"
+    onClick={handleRedeem}
+    disabled={isSubmitting}
+  >
+    {isSubmitting ? 'Redeeming...' : 'Redeem'}
+  </Button>
+) : (
+  <Button
+    variant="contained"
+    style={{ backgroundColor: "rgb(60, 72, 21)" }}
+    onClick={handleOpen}
+    disabled={isSubmitting || vault.is_redeemed}
+  >
+    {vault.is_redeemed ? 'Redeemed' : 'Contribute'}
+  </Button>
+)}
+
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle className="hero-title--gradient">{vault.title}</DialogTitle>
         <DialogContent>
@@ -125,28 +122,32 @@ function Vault({ vault, onDelete }) {
             Remaining amount to reach target: ₹{vault.target_amount - vault.current_amount}
           </DialogContentText>
           <form onSubmit={handleContributionSubmit} style={formStyle}>
-                        <TextField
-                          label="Contribution Amount (₹)"
-                          fullWidth
-                          type="number"
-                          variant="outlined"
-                          value={contributionAmount}
-                          onChange={(e) => setContributionAmount(e.target.value)}
-                          required
-                          error={!!error}
-                          helperText={error}
-                          disabled={isSubmitting}
-                        />
-                        <button variant="contained" type="submit" onClick={handleContributionSubmit} disabled={isSubmitting}>
-                        {isSubmitting ? 'Contributing...' : 'Save'}
-                      </button>
-                      </form>
-
+            <TextField
+              label="Contribution Amount (₹)"
+              fullWidth
+              type="number"
+              variant="outlined"
+              value={contributionAmount}
+              onChange={handleContributionChange}
+              required
+              error={!!error}
+              helperText={error}
+              disabled={isSubmitting}
+            />
+            <button
+              variant="contained"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Contributing...' : 'Save'}
+            </button>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
+
 const formStyle = {
   marginTop: "20px",
   display: "flex",

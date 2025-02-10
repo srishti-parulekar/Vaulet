@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Vault from "../../components/Vault";
+import Vault from "../Vault";
 import api from "../../api";
-import "./MyVaults.css";  // Add this import
-
+import "./MyVaults.css";
 
 const MyVaults = () => {
-  const [vault, setVault] = useState([]);
+  const [vaults, setVaults] = useState([]);
+
   useEffect(() => {
     getVaults();
   }, []);
@@ -13,7 +13,7 @@ const MyVaults = () => {
   const getVaults = () => {
     api
       .get("/api/vault/check/")
-      .then((res) => setVault(res.data))
+      .then((res) => setVaults(res.data))
       .catch((err) => alert(err));
   };
 
@@ -26,14 +26,22 @@ const MyVaults = () => {
       })
       .catch((error) => alert(error));
   };
+
+  const handleVaultUpdate = () => {
+    getVaults(); 
+  };
+
   return (
     <div className="vault-section">
-  {vault.map((vaultItem) => (
-    <Vault vault={vaultItem} onDelete={deleteVault} key={vaultItem.id} />
-  ))}
-</div>
-
-
+      {vaults.map((vaultItem) => (
+        <Vault
+          key={vaultItem.id}
+          vault={vaultItem}
+          onDelete={deleteVault}
+          onUpdate={handleVaultUpdate}
+        />
+      ))}
+    </div>
   );
 };
 
