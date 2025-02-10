@@ -11,3 +11,7 @@ python-dotenv
 Pillow 
 django-tailwind
 django-filter
+sqlalchemy
+phidata
+google-generativeai
+duckduckgo-search

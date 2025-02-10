@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from decimal import Decimal
 from api.models import PersonalVault
 from django.db import transaction
+from transactions.models import Transaction
 
 
 class MoneyVaultListCreate(generics.ListCreateAPIView):
@@ -64,6 +65,13 @@ class MoneyVaultContributeView(generics.UpdateAPIView):
             personal_vault.save()
             vault.save()
 
+            Transaction.objects.create(
+                user = request.user,
+                transaction_type = "VAULT_CONTRIBUTION",
+                amount = amount,
+                description =f"Contributed to vault '{vault.title}'",
+                vault = vault
+            )
             return Response({
                 "message": "Contribution successful",
                 "vault_balance": vault.current_amount,
