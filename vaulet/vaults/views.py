@@ -20,11 +20,11 @@ class MoneyVaultListCreate(generics.ListCreateAPIView):
         user = self.request.user
         # MoneyVault.objects.all to return all notes
         # filter to filter through and return only the ones written by the user
-        return MoneyVault.objects.filter(author=user)
+        return MoneyVault.objects.filter(user=user)
 
     def perform_create(self, serializer):
         if serializer.is_valid():
-            serializer.save(author=self.request.user)
+            serializer.save(user=self.request.user)
         else:
             print(serializer.errors)
 
@@ -36,7 +36,7 @@ class MoneyVaultDelete(generics.DestroyAPIView):
     # can only delete vaults the user owns
     def get_queryset(self):
         user = self.request.user
-        return MoneyVault.objects.filter(author=user)
+        return MoneyVault.objects.filter(user=user)
 
 class MoneyVaultContributeView(generics.UpdateAPIView):
     serializer_class = MoneyVaultSerializer

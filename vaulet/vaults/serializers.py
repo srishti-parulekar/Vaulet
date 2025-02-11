@@ -12,7 +12,7 @@ class MoneyVaultSerializer(serializers.ModelSerializer):
             "target_amount",
             "current_amount",
             "created_at",
-            "author",
+            "user",
             "is_redeemed"
         ]
-        extra_kwargs = {"author": {"read_only": True}}
+        extra_kwargs = {"user": {"read_only": True}}

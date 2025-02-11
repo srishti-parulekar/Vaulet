@@ -17,21 +17,27 @@ chat_bot_agent = Agent(
     role="Act like a helpful and informative chatbot that solves user queries",
     model=Gemini(id="gemini-1.5-flash", api_key=gemini_api_key),
     instructions=[
-        "Vaulet is a gamified budgeting app that helps users manage expenses and identify spending patterns.",
-        """It features customizable money "vaults" for saving toward specific goals and offers weekly and monthly challenges with badge rewards.""",
-        "Users can track daily expenses, while an AI assistant provides personalized financial advice based on vaults, challenges, and transactions.",
-        "Your role is to assist users with their budgeting inquiries, provide information about how the platform works, and help them with expense questions.",
-        "Additionally, guide users through the platform’s key features, including:"
-        "- Personal Vault: Users can credit money to their personal vault which will be used for all transactions on the application."
-        "- Vaults: Users can create vaults and set aside funds for specific goals.",
-        "- Challenges: Users can participate in weekly and monthly challenges and reap rewards."
-        "- Transaction History: Review past transactions involving contributions to and retrievals from vaults and challenges only."
-        "- Earn Badges: Participate in weekly and monthly challenges to earn badges."
-        "Be professional, informative, and user-friendly in your responses.",
-        "When answering questions, be clear, concise, and engaging.",
-        "Encourage users to explore platform features and learn how to manage their expenses better.",
-        "If unsure about a user’s request, ask for clarification gracefully.",
-        "Stay on-topic and provide relevant answers that enhance the trading experience."
+        "Vaulet is a gamified budgeting app for expense management and financial goal achievement.",
+        
+        "Main features include:",
+        "1. Personal Vault - Central wallet for all app transactions",
+        "2. Goal Vaults - Dedicated savings spaces for specific financial goals",
+        "3. Challenges - Weekly/monthly tasks with badge rewards",
+        "4. Transaction History - Track vault and challenge activities",
+        "5. Badge System - Earn rewards through challenge completion",
+        
+        "When assisting users:",
+        "- Provide clear, concise explanations of features and functionality",
+        "- Guide users through setting up vaults and joining challenges",
+        "- Explain the gamification elements and reward system",
+        "- Help troubleshoot basic app usage issues",
+        "- Direct technical or account-specific issues to support",
+        
+        "Do not:",
+        "- Provide specific financial advice",
+        "- Access or discuss individual user data",
+        "- Make assumptions about app features not listed",
+        "- Engage in off-topic conversations",
     ],
     show_tool_calls=True,
     markdown=True,
@@ -40,9 +46,53 @@ chat_bot_agent = Agent(
 sql_agent = Agent(
     name = 'SQL Agent',
     model=Gemini(id="gemini-1.5-flash", api_key=gemini_api_key),
-    # instructions=[
-    #     "the api_personal "
-    # ]
+    instructions=[
+        "Always filter queries by requesting user's ID/username",
+        
+        "Database structure:",
+        
+        "1. api_personal:",
+        "- balance: User's available spending money",
+        
+        "2. api_userperformance:",
+        "- total_contributions: All-time user contributions",
+        "- weekly_contributions: Current week's contributions",
+        "- monthly_contributions: Current month's contributions",
+        "- last_challenge_created: Timestamp of latest challenge",
+        
+        "3. auth_user:",
+        "- Standard user authentication data",
+        
+        "4. challenges_challenge:",
+        "- challenge_type: 'weekly'/'monthly'/'custom'",
+        "- title, description: Challenge details",
+        "- is_automated: System-generated vs user-created",
+        "- start_date, end_date: Challenge duration",
+        "- target_amount: Required completion amount",
+        "- current_amount: Progress towards target",
+        "- is_redeemed: Completion status",
+        
+        "5. expenses_expense:",
+        "- name, amount, category, description",
+        "- necessity_level: 1 (low) to 4 (essential)",
+        "- date, created_at: Timing information",
+        
+        "6. transactions_transaction:",
+        "- transaction_type: 'challenge'/'vault' + 'contribution'/'refund'",
+        "- amount, description, created_at",
+        "- challenge_title/vault_title: Associated goal (mutually exclusive)",
+        
+        "7. vaults_moneyvault:",
+        "- title, target_amount, current_amount",
+        "- created_at, author",
+        "- is_redeemed: Completion status",
+        
+        "When processing queries:",
+        "- Always include relevant date ranges",
+        "- Format monetary values consistently",
+        "- Group related transactions when appropriate",
+        "- Provide summary statistics when requested",
+    ],
     markdown=True,
     show_tool_calls=True,
     system_messages='Your are equipped with tools to manage my SQLite database.',
@@ -56,8 +106,14 @@ web_search_agent = Agent(
     role="Search the web for relevant information.",
     model=Gemini(id="gemini-1.5-flash", api_key=gemini_api_key),
     tools=[DuckDuckGo()],
-    instructions=["Always include sources in your responses."],
-    show_tool_calls=True,
+instructions=[
+        "When researching financial topics:",
+        "- Focus on reputable financial sources",
+        "- Include multiple perspectives when relevant",
+        "- Cite all sources clearly",
+        "- Prioritize recent information",
+        "- Avoid speculation and personal opinions",
+    ],    show_tool_calls=True,
     markdown=True,
 )
 
@@ -77,4 +133,4 @@ agent_team = Agent(
 )
 
 
-agent_team.print_response("give me a summary for all the expenses for user testuser", stream=True)
+agent_team.print_response("give me a summary for all the vaults for user 1", stream=True)

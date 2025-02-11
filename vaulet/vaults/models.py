@@ -14,7 +14,7 @@ class MoneyVault(models.Model):
     # auto now add ensures that this information is automatically recorded w/o user input
 
     # one user can have money moneyVaults. if user deleted, all its vaults deleted
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vaults")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vaults")
     is_redeemed = models.BooleanField(default=False)
     def contribute(self, amount):
         """Method to handle contribution to a vault."""
@@ -34,7 +34,7 @@ class MoneyVault(models.Model):
     def refund(self):
         """Refunding on cancellation of money vault"""
         try:
-            personal_vault = self.author.personal_vault
+            personal_vault = self.user.personal_vault
             personal_vault.balance += self.current_amount
             self.current_amount = 0.00
             personal_vault.save()
