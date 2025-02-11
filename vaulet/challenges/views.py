@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from transactions.models import Transaction
 from .serializers import ChallengeSerializer
 from .models import Challenge
 from rest_framework.permissions import IsAuthenticated
@@ -125,6 +126,14 @@ class ChallengeContributeView(generics.UpdateAPIView):
                 }, status=400)
                 
             challenge.contribute(amount)
+            Transaction.objects.create(
+                user = request.user,
+                transaction_type = "CHALLENGE_CONTRIBUTION",
+                amount = amount,
+                description=f"Contributed to challenge '{challenge.title}'",
+                challenge = challenge
+            )
+
             return Response({
                 "message": "Contribution successful",
                 "current_amount": challenge.current_amount,
@@ -171,7 +180,13 @@ class ChallengeRedeemView(generics.UpdateAPIView):
             # Mark challenge as redeemed
             challenge.is_redeemed = True
             challenge.save()
-            
+            Transaction.objects.create(
+                user = request.user,
+                amount = challenge.target_amount,
+                transaction_type = "CHALLENGE_REFUND",
+                description =f"Redeemed from challenge '{challenge.title}'",
+                challenge = challenge
+            )
             return Response({
                 "message": "Challenge amount redeemed successfully",
                 "redeemed_amount": challenge.current_amount,

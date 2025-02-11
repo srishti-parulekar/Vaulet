@@ -114,6 +114,13 @@ class MoneyVaultRedeemView(generics.UpdateAPIView):
             vault.is_redeemed = True
             vault.save()
 
+            Transaction.objects.create(
+                user = request.user,
+                amount = vault.target_amount,
+                transaction_type = "VAULT_REFUND",
+                description =f"Redeemed from vault '{vault.title}'",
+                vault = vault
+            )
             return Response({
                 "message" : "Vault has been redeemed successfully",
                 "redeemed_amount" : vault.current_amount,
