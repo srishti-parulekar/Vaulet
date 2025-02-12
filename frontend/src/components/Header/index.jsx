@@ -1,18 +1,23 @@
 import React from "react";
-import { Button, Link } from "@mui/material";
+import { Button } from "@mui/material";
 import { CgMenuGridR } from "react-icons/cg";
-import walletImage from "../../assets/walletNoBG.png";
-import "./Header.css";
 import { useNavigate } from "react-router-dom";
+import "./Header.css"; 
+
 const Header = ({ handleDrawerOpen }) => {
   const navigate = useNavigate();
 
-  const handleLogout = () =>{
-    navigate("/logout")
-  }
+  const handleLogout = () => {
+    navigate("/logout");
+  };
+
   return (
-    // style={{ zIndex: 100, position: "relative" }}
-    <header >
+    <header 
+      style={{
+        borderBottom: "0.01px solid #ffd9009d", // One-sided bottom border
+        width: "100%", // Ensure it spans full width
+      }}
+    >
       <nav>
         <div className="left-nav">
           <div style={{ paddingTop: "1rem" }}>
@@ -24,19 +29,16 @@ const Header = ({ handleDrawerOpen }) => {
             </Button>
           </div>
           <div className="logo">
-            {/* <img
-              src={walletImage}
-              alt="wallet"
-              style={{ width: "70px", height: "auto" }}
-            /> */}
-            <h5 className="hero-title--gradient" style={{fontSize: "2.5rem", margin: "0.5rem"}}>Vaulet</h5>
+            <h5 className="hero-title--gradient" style={{ fontSize: "2rem", marginTop: "1rem" }}>
+              Vaulet
+            </h5>
           </div>
         </div>
         <div className="right-nav">
           <div className="nav-links">
-            <Button style={{color: "#ffffff"}} onClick={
-              handleLogout
-            }>Logout</Button>
+            <Button style={{ color: "#ffffff" }} onClick={handleLogout}>
+              Logout
+            </Button>
           </div>
         </div>
       </nav>

@@ -79,7 +79,7 @@ const Challenge = ({ challenge, onContributionSuccess }) => {
 
   const isCompleted = challenge.current_amount >= challenge.target_amount;
   return (
-    <div className="challenge-card">
+    <div className="challenge-card" >
       <h3>{challenge.title}</h3>
       <p>{challenge.description}</p>
 

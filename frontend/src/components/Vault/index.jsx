@@ -78,8 +78,8 @@ function Vault({ vault, onDelete, onUpdate }) {
   const isCompleted = vault.current_amount >= vault.target_amount;
 
   return (
-    <div className="account-balance">
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+<div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem" }}>
+<div style={{ display: "flex", justifyContent: "space-between" }}>
         <p className="vault-title" style={{ paddingTop: "0.2rem" }}>{vault.title}</p>
         <button style={{ fontSize: "1.5rem", background: "none" }} onClick={() => onDelete(vault.id)}>
           <MdOutlineDeleteOutline />

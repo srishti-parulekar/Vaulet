@@ -81,12 +81,12 @@ const Personal = () => {
   }, []);
 
   return (
-    <div className="account-balance-container">
+    <div className="account-balance-container" style={{padding: "0rem"}}>
       <section >
         <h3 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
           My Personal Vault
         </h3>
-        <div className="account-balance" style={{marginBottom: "1rem"}}>
+        <div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem", marginBottom: "1rem"}}>
           <h4>Total Balance</h4>
           <p>${state.balance}</p>
           <p>123-456-7890 | April 2028</p>
@@ -129,7 +129,7 @@ const Personal = () => {
           </DialogContent>
         </Dialog>
 
-        <section className="account-balance">
+        <section className="account-balance" style={{paddingLeft: "0rem"}}>
         <Card />
         </section>
       </section>

@@ -26,7 +26,7 @@ const Challenges = () => {
       className="account-balance-container"
       style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}
     >
-      <div className="account-balance" style={{marginRight: "0.5rem"}}>
+      <div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem", marginRight: "1.5rem", minHeight: "40rem"}}>
         <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
           Active Challenges
         </h2>
@@ -51,58 +51,68 @@ const Challenges = () => {
           )}
         </div>
       </div>
+      <div
+  className="account-balance"
+  style={{
+    border: "0.05rem solid #ffffff",
+    padding: "0.75rem",
+    borderRadius: "0.5rem",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-evenly",
+    gap: "1rem",
+  }}
+>
+  {/* Completed Challenges */}
+  <div>
+    <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
+      Completed Challenges
+    </h2>
+    <div className="account-balance">
+      {challenges.completed_challenges.length > 0 ? (
+        challenges.completed_challenges.map((challenge) => (
+          <Challenge
+            challenge={challenge}
+            key={challenge.id}
+            onContributionSuccess={getChallenges}
+          />
+        ))
+      ) : (
+        <p>No completed challenges available at the moment.</p>
+      )}
+    </div>
+  </div>
 
-      <div className="account-balance" style={{justifyItems: "center"}}>
-        <div style={{marginBottom: "2rem"}}>
-          <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
-            Completed Challenges
-          </h2>
-          <div
-            style={{
-              display: "flex",
-              backgroundColor: "rgba(34, 117, 18, 0.19)",
-            }}
-            className="account-balance"
-          >
-            {challenges.completed_challenges.length > 0 ? (
-              challenges.completed_challenges.map((challenge) => (
-                <Challenge 
-                  challenge={challenge} 
-                  key={challenge.id}
-                  onContributionSuccess={getChallenges}
-                />
-              ))
-            ) : (
-              <p>No completed challenges available at the moment.</p>
-            )}
-          </div>
-        </div>
+  {/* Separator */}
+  <div
+    style={{
+      height: "0.05rem",
+      backgroundColor: "#ffffff",
+      width: "100%",
+    }}
+  ></div>
 
-        <div>
-          <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
-            Expired Challenges
-          </h2>
-          <div
-            style={{
-              display: "flex",
-              backgroundColor: "rgba(34, 117, 18, 0.19)",
-            }}
-            className="account-balance"
-          >
-            {challenges.expired_challenges.length > 0 ? (
-              challenges.expired_challenges.map((challenge) => (
-                <Challenge 
-                  challenge={challenge} 
-                  key={challenge.id}
-                  onContributionSuccess={getChallenges}
-                />
-              ))
-            ) : (
-              <p>No expired challenges available at the moment.</p>
-            )}
-          </div>
-        </div>
-      </div>
+  {/* Expired Challenges */}
+  <div>
+    <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
+      Expired Challenges
+    </h2>
+    <div className="account-balance">
+      {challenges.expired_challenges.length > 0 ? (
+        challenges.expired_challenges.map((challenge) => (
+          <Challenge
+            challenge={challenge}
+            key={challenge.id}
+            onContributionSuccess={getChallenges}
+          />
+        ))
+      ) : (
+        <p>No expired challenges available at the moment.</p>
+      )}
+    </div>
+  </div>
+</div>
+
     </div>
   );
 };

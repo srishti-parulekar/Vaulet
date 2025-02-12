@@ -50,18 +50,6 @@ class ChallengeListCreateView(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-# class ChallengeCompleteView(generics.UpdateAPIView):
-#     serializer_class = ChallengeSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def update(self, request, *args, **kwargs):
-#         challenge = self.get_object()
-
-#         if challenge.is_completed():
-#             return Response({"message": "Challenge completed successfully!"})
-#         else:
-#             return Response({"message": "Challenge is not completed yet!"})
-
 
 class ChallengeListView(generics.ListAPIView):
     
