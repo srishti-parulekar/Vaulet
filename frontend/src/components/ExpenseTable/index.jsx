@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import { IoAddCircleOutline } from "react-icons/io5";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Select,
+  MenuItem,
+  FormControl,
+  Card,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  TextField
+} from '@mui/material';
 import api from '../../api';
 
 const CATEGORY_CHOICES = [
@@ -40,10 +48,50 @@ const columns = [
     { id: 'necessity_level', label: 'Necessity Level', minWidth: 170, align: 'right' },
 ];
 
-const ExpenseTable = () => {
+const tableStyles = {
+    backgroundColor: 'transparent',
+    '& .MuiTableCell-root': {
+        borderColor: 'rgba(255, 255, 255, 0.8)',
+        color: 'white',
+    },
+    '& .MuiTableBody-root .MuiTableRow-root:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    },
+    '& .MuiSelect-root': {
+        color: 'white',
+        '&:before': {
+            borderColor: 'white',
+        },
+    },
+    '& .MuiSelect-icon': {
+        color: 'white',
+    },
+    '& .MuiInput-underline:before': {
+        borderBottomColor: 'rgba(255, 255, 255, 0.7)',
+    },
+    '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+        borderBottomColor: 'white',
+    },
+    '& .MuiMenuItem-root': {
+        color: 'black',
+    },
+};
+
+const ExpenseTable = ({ onCreateExpense }) => {
+    const [openContributionPopup, setOpenContributionPopup] = useState(false);
+    const [contributionAmount, setContributionAmount] = useState("");
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [expenses, setExpenses] = useState([]);
+    const [editingId, setEditingId] = useState(null);
+    const [formState, setFormState] = useState({
+        name: '',
+        amount: '',
+        category: 'OTHER',
+        necessity_level: 1,
+        date: new Date().toISOString().split('T')[0],
+        description: ''
+    });
 
     useEffect(() => {
         const fetchExpenses = async () => {
@@ -59,15 +107,40 @@ const ExpenseTable = () => {
         fetchExpenses();
     }, []);
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
+    const handleOpenContributionPopup = () => {
+        setOpenContributionPopup(true);
     };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
+    
+    const handleCloseContributionPopup = () => {
+        setOpenContributionPopup(false);
     };
-
+    
+    const handleContributionSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            const res = await api.post("/api/expenses/check/", {
+                ...formState,
+                amount: parseFloat(contributionAmount)
+            });
+            
+            setExpenses([res.data, ...expenses]);
+            alert(`Your expense of $${contributionAmount} is recorded.`);
+            setOpenContributionPopup(false);
+            setContributionAmount("");
+            setFormState({
+                name: '',
+                amount: '',
+                category: 'OTHER',
+                necessity_level: 1,
+                date: new Date().toISOString().split('T')[0],
+                description: ''
+            });
+        } catch (error) {
+            console.error("Failed to record expense: ", error);
+            alert("Failed to record expense.");
+        }
+    };
+    
     const handleCategoryChange = async (expenseId, newValue) => {
         try {
             await api.patch(`/api/expenses/${expenseId}/`, { category: newValue });
@@ -76,6 +149,7 @@ const ExpenseTable = () => {
                     ? { ...expense, category: newValue }
                     : expense
             ));
+            setEditingId(null);
         } catch (error) {
             console.error("Failed to update category:", error);
         }
@@ -89,75 +163,94 @@ const ExpenseTable = () => {
                     ? { ...expense, necessity_level: newValue }
                     : expense
             ));
+            setEditingId(null);
         } catch (error) {
             console.error("Failed to update necessity level:", error);
         }
     };
 
-    const tableStyles = {
-        '& .MuiPaper-root': {
-            backgroundColor: 'transparent',
-            color: 'white',
-        },
-        '& .MuiTableCell-root': {
-            color: 'white',
-            borderColor: 'white',
-        },
-        '& .MuiTablePagination-root': {
-            color: 'white',
-        },
-        '& .MuiTablePagination-select': {
-            color: 'white',
-        },
-        '& .MuiTablePagination-selectIcon': {
-            color: 'white',
-        },
-        '& .MuiTablePagination-actions': {
-            color: 'white',
-            '& .MuiIconButton-root': {
-                color: 'white',
-            },
-        },
-        '& .MuiTableRow-hover': {
-            '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.08) !important',
-            },
-        },
-        '& .MuiSelect-root': {
-            color: 'white',
-            '&:before': {
-                borderColor: 'white',
-            },
-        },
-        '& .MuiSelect-icon': {
-            color: 'white',
-        },
+    const getCategoryLabel = (value) => {
+        return CATEGORY_CHOICES.find(cat => cat.value === value)?.label || value;
+    };
+
+    const getNecessityLabel = (value) => {
+        return NECESSITY_LEVELS.find(level => level.value === value)?.label || value;
     };
 
     return (
-        <Paper 
+        <Card 
             sx={{ 
-                width: '95%', 
-                overflow: 'hidden', 
-                height: '100%',
+                width: '100%',
                 backgroundColor: 'transparent',
-                ...tableStyles
+                boxShadow: 'none',
+                border: '1px solid rgba(255, 255, 255, 0.8)',
             }}
         >
-            <TableContainer sx={{ maxHeight: 600 }}>
-                <Table stickyHeader aria-label="sticky table">
+            <Dialog
+                open={openContributionPopup}
+                onClose={handleCloseContributionPopup}
+            >
+                <DialogTitle className="hero-title--gradient">Add New Expense</DialogTitle>
+                <DialogContent>
+                    <form 
+                        onSubmit={handleContributionSubmit} 
+                        style={{
+                            marginTop: "20px",
+                            display: "flex",
+                            flexDirection: "column",
+                            width: "100%",
+                            gap: "10px"
+                        }}
+                    >
+                        <TextField
+                            label="Name"
+                            fullWidth
+                            value={formState.name}
+                            onChange={(e) => setFormState({...formState, name: e.target.value})}
+                            required
+                        />
+                        <TextField
+                            label="Amount in Rupees"
+                            fullWidth
+                            type="number"
+                            value={contributionAmount}
+                            onChange={(e) => setContributionAmount(e.target.value)}
+                            required
+                        />
+                        <TextField
+                            label="Description"
+                            fullWidth
+                            value={formState.description}
+                            onChange={(e) => setFormState({...formState, description: e.target.value})}
+                        />
+                        <FormControl fullWidth>
+                            <Select
+                                value={formState.category}
+                                onChange={(e) => setFormState({...formState, category: e.target.value})}
+                            >
+                                {CATEGORY_CHOICES.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <Button variant="contained" type="submit">
+                            Save
+                        </Button>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            <TableContainer>
+                <Table sx={tableStyles}>
                     <TableHead>
                         <TableRow>
                             {columns.map((column) => (
                                 <TableCell
                                     key={column.id}
                                     align={column.align}
-                                    style={{ 
-                                        minWidth: column.minWidth,
-                                        backgroundColor: 'transparent',
-                                        color: 'white',
-                                        borderColor: 'white'
-                                    }}
+                                    style={{ minWidth: column.minWidth }}
                                 >
                                     {column.label}
                                 </TableCell>
@@ -165,102 +258,143 @@ const ExpenseTable = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
+                        <TableRow 
+                            sx={{ 
+                                position: 'sticky',
+                                top: 0,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                zIndex: 1,
+                                '&:hover': {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                }
+                            }}
+                        >
+                            <TableCell colSpan={columns.length} sx={{ height: '64px', padding: 0 }}>
+                                <Button
+                                    fullWidth
+                                    onClick={handleOpenContributionPopup}
+                                    sx={{
+                                        height: '100%',
+                                        color: 'rgba(255, 255, 255, 0.7)',
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                        }
+                                    }}
+                                >
+                                    <div style={{ 
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                    }}>
+                                        <IoAddCircleOutline size={20} />
+                                        <span>Add New Expense</span>
+                                    </div>
+                                </Button>
+                            </TableCell>
+                        </TableRow>
                         {expenses
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((expense) => {
-                                return (
-                                    <TableRow 
-                                        hover 
-                                        role="checkbox" 
-                                        tabIndex={-1} 
-                                        key={expense.id}
-                                    >
-                                        {columns.map((column) => {
-                                            if (column.id === 'category') {
-                                                return (
-                                                    <TableCell 
-                                                        key={column.id} 
-                                                        align={column.align}
-                                                        sx={{
-                                                            color: 'white',
-                                                            borderColor: 'white'
-                                                        }}
-                                                    >
-                                                        <Select
-                                                            value={expense.category}
-                                                            onChange={(e) => handleCategoryChange(expense.id, e.target.value)}
-                                                            sx={{ color: 'white' }}
-                                                        >
-                                                            {CATEGORY_CHOICES.map((option) => (
-                                                                <MenuItem key={option.value} value={option.value}>
-                                                                    {option.label}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </Select>
-                                                    </TableCell>
-                                                );
-                                            }
-                                            if (column.id === 'necessity_level') {
-                                                return (
-                                                    <TableCell 
-                                                        key={column.id} 
-                                                        align={column.align}
-                                                        sx={{
-                                                            color: 'white',
-                                                            borderColor: 'white'
-                                                        }}
-                                                    >
-                                                        <Select
-                                                            value={expense.necessity_level}
-                                                            onChange={(e) => handleNecessityChange(expense.id, e.target.value)}
-                                                            sx={{ color: 'white' }}
-                                                        >
-                                                            {NECESSITY_LEVELS.map((option) => (
-                                                                <MenuItem key={option.value} value={option.value}>
-                                                                    {option.label}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </Select>
-                                                    </TableCell>
-                                                );
-                                            }
-                                            const value = expense[column.id];
+                            .map((expense) => (
+                                <TableRow key={expense.id}>
+                                    {columns.map((column) => {
+                                        if (column.id === 'category') {
                                             return (
-                                                <TableCell 
-                                                    key={column.id} 
-                                                    align={column.align}
-                                                    sx={{
-                                                        color: 'white',
-                                                        borderColor: 'white'
-                                                    }}
-                                                >
-                                                    {column.format && typeof value === 'number'
-                                                        ? column.format(value)
-                                                        : value || "N/A"}
+                                                <TableCell key={column.id} align={column.align}>
+                                                    {editingId === expense.id ? (
+                                                        <FormControl fullWidth variant="standard">
+                                                            <Select
+                                                                value={expense.category}
+                                                                onChange={(e) => handleCategoryChange(expense.id, e.target.value)}
+                                                                sx={{ color: 'white' }}
+                                                            >
+                                                                {CATEGORY_CHOICES.map((option) => (
+                                                                    <MenuItem key={option.value} value={option.value}>
+                                                                        {option.label}
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </Select>
+                                                        </FormControl>
+                                                    ) : (
+                                                        <div 
+                                                            style={{ cursor: 'pointer' }} 
+                                                            onClick={() => setEditingId(expense.id)}
+                                                        >
+                                                            {getCategoryLabel(expense.category)}
+                                                        </div>
+                                                    )}
                                                 </TableCell>
                                             );
-                                        })}
-                                    </TableRow>
-                                );
-                            })}
+                                        }
+                                        if (column.id === 'necessity_level') {
+                                            return (
+                                                <TableCell key={column.id} align={column.align}>
+                                                    {editingId === expense.id ? (
+                                                        <FormControl fullWidth variant="standard">
+                                                            <Select
+                                                                value={expense.necessity_level}
+                                                                onChange={(e) => handleNecessityChange(expense.id, e.target.value)}
+                                                                sx={{ color: 'white' }}
+                                                            >
+                                                                {NECESSITY_LEVELS.map((option) => (
+                                                                    <MenuItem key={option.value} value={option.value}>
+                                                                        {option.label}
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </Select>
+                                                        </FormControl>
+                                                    ) : (
+                                                        <div 
+                                                            style={{ cursor: 'pointer' }} 
+                                                            onClick={() => setEditingId(expense.id)}
+                                                        >
+                                                            {getNecessityLabel(expense.necessity_level)}
+                                                        </div>
+                                                    )}
+                                                </TableCell>
+                                            );
+                                        }
+                                        const value = expense[column.id];
+                                        return (
+                                            <TableCell key={column.id} align={column.align}>
+                                                {value || "N/A"}
+                                            </TableCell>
+                                        );
+                                    })}
+                                </TableRow>
+                            ))}
                     </TableBody>
                 </Table>
             </TableContainer>
+            
             <TablePagination
                 rowsPerPageOptions={[10, 25, 100]}
                 component="div"
                 count={expenses.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
+                onPageChange={(event, newPage) => setPage(newPage)}
+                onRowsPerPageChange={(event) => {
+                    setRowsPerPage(parseInt(event.target.value, 10));
+                    setPage(0);
+                }}
                 sx={{
                     color: 'white',
-                    borderColor: 'white'
+                    '& .MuiTablePagination-select': {
+                        color: 'white',
+                    },
+                    '& .MuiTablePagination-selectIcon': {
+                        color: 'white',
+                    },
+                    '& .MuiTablePagination-displayedRows': {
+                        color: 'white',
+                    },
+                    '& .MuiIconButton-root': {
+                        color: 'white',
+                    },
                 }}
             />
-        </Paper>
+        </Card>
     );
-}
+};
 
 export default ExpenseTable;
