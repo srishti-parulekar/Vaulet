@@ -199,7 +199,7 @@ const ExpenseTable = ({ onCreateExpense }) => {
                             display: "flex",
                             flexDirection: "column",
                             width: "100%",
-                            gap: "10px"
+                            gap: "10px",
                         }}
                     >
                         <TextField
@@ -235,6 +235,21 @@ const ExpenseTable = ({ onCreateExpense }) => {
                                 ))}
                             </Select>
                         </FormControl>
+
+                        <FormControl fullWidth>
+    <Select
+        value={formState.necessity_level}
+        onChange={(e) => setFormState({...formState, necessity_level: e.target.value})}  // Fix: Update necessity_level instead of category
+    >
+        {NECESSITY_LEVELS.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+                {option.label}
+            </MenuItem>
+        ))}
+    </Select>
+</FormControl>
+
+
                         <Button variant="contained" type="submit">
                             Save
                         </Button>
