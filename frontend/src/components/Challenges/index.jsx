@@ -26,7 +26,7 @@ const Challenges = () => {
       className="account-balance-container"
       style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}
     >
-      <div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem", marginRight: "1.5rem", minHeight: "40rem"}}>
+      <div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem", marginRight: "1.5rem", minHeight: "40rem", width: "50%"}}>
         <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
           Active Challenges
         </h2>
@@ -61,6 +61,7 @@ const Challenges = () => {
     flexDirection: "column",
     justifyContent: "space-evenly",
     gap: "1rem",
+    width: "50%"
   }}
 >
   {/* Completed Challenges */}

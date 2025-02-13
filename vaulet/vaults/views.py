@@ -37,6 +37,12 @@ class MoneyVaultDelete(generics.DestroyAPIView):
     def get_queryset(self):
         user = self.request.user
         return MoneyVault.objects.filter(user=user)
+    
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)
+        else:
+            print(serializer.errors)
 
 class MoneyVaultContributeView(generics.UpdateAPIView):
     serializer_class = MoneyVaultSerializer

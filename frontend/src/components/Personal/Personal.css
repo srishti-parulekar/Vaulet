@@ -12,7 +12,7 @@
   }
   
   .sidebar {
-    width: 250px;
+    /* width: 250px; */
     background-color: var(--artichoke-green);
     padding: 20px;
     color: white;

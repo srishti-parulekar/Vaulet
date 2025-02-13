@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import PersonalVault, UserPerformance
-
+import re
+from datetime import datetime
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,8 +58,7 @@ class PersonalVaultSerializer(serializers.ModelSerializer):
 
     def validate_expiry(self, value):
         """Validate that expiry is in MMYY format and not expired."""
-        import re
-        from datetime import datetime
+        
 
         if not re.match(r"^(0[1-9]|1[0-2])\d{2}$", value):
             raise serializers.ValidationError("Expiry must be in MMYY format.")

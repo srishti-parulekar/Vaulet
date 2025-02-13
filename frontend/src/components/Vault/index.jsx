@@ -8,6 +8,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import api from "../../api";
+import { Chart as ChartJS } from "chart.js/auto";
+import { Line } from "react-chartjs-2";
 
 function Vault({ vault, onDelete, onUpdate }) {
   const formattedDate = new Date(vault.created_at).toLocaleDateString("en-US");
@@ -95,6 +97,9 @@ function Vault({ vault, onDelete, onUpdate }) {
         </p>
       </div>
       <p className="vault-date">Created on: {formattedDate}</p>
+      <div className="line-chart">
+        
+      </div>
       {isCompleted && !vault.is_redeemed ? (
   <Button
     variant="contained"
