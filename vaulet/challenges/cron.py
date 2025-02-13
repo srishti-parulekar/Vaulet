@@ -1,85 +1,105 @@
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import User
 from django.utils.timezone import now
 from datetime import timedelta
+from decimal import Decimal
 from .models import Challenge
 from api.models import UserPerformance
-from decimal import Decimal
 
-WEEKLY_CHALLENGE_TEMPLATE = {
-    "title": "Weekly Savings Challenge",
-    "description": "Save a specified amount over the course of this week to build healthy financial habits.",
-    "challenge_type": "WEEKLY",
-    "is_automated": True,
-}
-
-MONTHLY_CHALLENGE_TEMPLATE = {
-    "title": "Monthly Savings Challenge",
-    "description": "Set a goal and work throughout the month to reach your savings target.",
-    "challenge_type": "MONTHLY",
-    "is_automated": True,
+# Challenge templates with proper durations
+CHALLENGE_TEMPLATES = {
+    'WEEKLY': {
+        'title': 'Weekly Savings Challenge',
+        'description': 'Save a specified amount over the course of this week to build healthy financial habits.',
+        'challenge_type': 'WEEKLY',
+        'is_automated': True,
+        'duration': timedelta(minutes=2),
+        'increase_factor': Decimal('1.1'),
+        'min_amount': Decimal('50')
+    },
+    'MONTHLY': {
+        'title': 'Monthly Savings Challenge',
+        'description': 'Set a goal and work throughout the month to reach your savings target.',
+        'challenge_type': 'MONTHLY',
+        'is_automated': True,
+        'duration': timedelta(minutes=5),
+        'increase_factor': Decimal('1.2'),
+        'min_amount': Decimal('200')
+    }
 }
 
 def calculate_target(current_contributions, increase_factor, min_amount):
+    """Calculate the target amount for a new challenge based on user's performance"""
     if current_contributions == 0:
-        return Decimal(str(min_amount))
+        return min_amount
     return max(
-        current_contributions * Decimal(str(increase_factor)),
-        Decimal(str(min_amount))
+        current_contributions * increase_factor,
+        min_amount
     )
 
-def create_weekly_challenges():
-    print("Creating weekly challenges...")
-    users = UserPerformance.objects.all()
+def create_challenge(challenge_type, user_perf):
+    """Create a new challenge for a user based on their performance"""
+    template = CHALLENGE_TEMPLATES[challenge_type]
     current_time = now()
     
-    for user_perf in users:
-        existing_challenge = Challenge.objects.filter(
-            user=user_perf.user,
-            challenge_type='WEEKLY',
-            is_automated=True,
-            end_date__gt=current_time
-        ).exists()
+    # Check for existing active challenge
+    existing_challenge = Challenge.objects.filter(
+        user=user_perf.user,
+        challenge_type=challenge_type,
+        is_automated=True,
+        end_date__gt=current_time
+    ).exists()
+    
+    if not existing_challenge:
+        # Calculate target based on challenge type
+        contributions = (user_perf.weekly_contributions 
+                       if challenge_type == 'WEEKLY' 
+                       else user_perf.monthly_contributions)
         
-        if not existing_challenge:
-            target = calculate_target(user_perf.weekly_contributions, 1.1, 50)
-            
-            Challenge.objects.create(
-                user=user_perf.user,
-                title=WEEKLY_CHALLENGE_TEMPLATE["title"],
-                description=WEEKLY_CHALLENGE_TEMPLATE["description"],
-                challenge_type=WEEKLY_CHALLENGE_TEMPLATE["challenge_type"],
-                is_automated=WEEKLY_CHALLENGE_TEMPLATE["is_automated"],
-                start_date=current_time,
-                end_date=current_time + timedelta(minutes=10),
-                target_amount=target
-            )
-            user_perf.last_challenge_created = current_time
-            user_perf.save()
+        target = calculate_target(
+            contributions,
+            template['increase_factor'],
+            template['min_amount']
+        )
+        
+        # Create new challenge
+        Challenge.objects.create(
+            user=user_perf.user,
+            title=template['title'],
+            description=template['description'],
+            challenge_type=template['challenge_type'],
+            is_automated=template['is_automated'],
+            start_date=current_time,
+            end_date=current_time + template['duration'],
+            target_amount=target
+        )
+        
+        # Update user performance
+        user_perf.last_challenge_created = current_time
+        user_perf.save()
+        
+        return True
+    return False
+
+def create_weekly_challenges():
+    """Create weekly challenges for all users"""
+    users = UserPerformance.objects.all()
+    created_count = 0
+    
+    for user_perf in users:
+        if create_challenge('WEEKLY', user_perf):
+            created_count += 1
+    
+    print(f"Created {created_count} new weekly challenges")
 
 def create_monthly_challenges():
-    print("Creating monthly challenges...")
+    """Create monthly challenges for all users"""
     users = UserPerformance.objects.all()
-    current_time = now()
+    created_count = 0
     
     for user_perf in users:
-        existing_challenge = Challenge.objects.filter(
-            user=user_perf.user,
-            challenge_type='MONTHLY',
-            is_automated=True,
-            end_date__gt=current_time
-        ).exists()
-        
-        if not existing_challenge:
-            target = calculate_target(user_perf.monthly_contributions, 1.2, 200)
-            
-            Challenge.objects.create(
-                user=user_perf.user,
-                title=MONTHLY_CHALLENGE_TEMPLATE["title"],
-                description=MONTHLY_CHALLENGE_TEMPLATE["description"],
-                challenge_type=MONTHLY_CHALLENGE_TEMPLATE["challenge_type"],
-                is_automated=MONTHLY_CHALLENGE_TEMPLATE["is_automated"],
-                start_date=current_time,
-                end_date=current_time + timedelta(minutes=20),
-                target_amount=target
-            )
-            user_perf.last_challenge_created = current_time
-            user_perf.save()
+        if create_challenge('MONTHLY', user_perf):
+            created_count += 1
+    
+    print(f"Created {created_count} new monthly challenges")

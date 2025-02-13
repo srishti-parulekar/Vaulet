@@ -10,6 +10,7 @@ from api.models import PersonalVault
 from decimal import Decimal
 from django.utils.timezone import now
 from django.db import transaction
+from django.core.management import call_command
 
 
 class JoinChallengeView(generics.UpdateAPIView):
@@ -50,12 +51,13 @@ class ChallengeListCreateView(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-
 class ChallengeListView(generics.ListAPIView):
-    
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        # Ensure user has challenges before listing them
+        call_command('check_create_challenges')
+        
         # Get all challenges for the logged-in user
         user = request.user
         challenges = Challenge.objects.filter(user=user)
@@ -69,7 +71,6 @@ class ChallengeListView(generics.ListAPIView):
             if challenge.is_completed():
                 completed_challenges.append(challenge)
             elif not challenge.is_active():
-                # Delete expired challenges automatically
                 challenge.delete()
                 expired_challenges.append(challenge)
             else:
@@ -80,15 +81,11 @@ class ChallengeListView(generics.ListAPIView):
         completed_data = ChallengeSerializer(completed_challenges, many=True).data
         expired_data = ChallengeSerializer(expired_challenges, many=True).data
 
-        # Return a structured response
-        return Response(
-            {
-                "active_challenges": active_data,
-                "completed_challenges": completed_data,
-                "expired_challenges": expired_data,
-            }
-        )
-
+        return Response({
+            "active_challenges": active_data,
+            "completed_challenges": completed_data,
+            "expired_challenges": expired_data,
+        })
 
 class ChallengeContributeView(generics.UpdateAPIView):
     serializer_class = ChallengeSerializer

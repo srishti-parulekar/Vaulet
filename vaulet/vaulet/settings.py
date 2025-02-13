@@ -71,20 +71,16 @@ INSTALLED_APPS = [
     'expenses',
     'vaults',
 ]
-# CRONJOBS = [
-#     (
-#         "0 0 * * 1",
-#         "api.cron.create_weekly_challenges",
-#     ),  # Every Monday at midnight
-#     (
-#         "0 0 1 * *",
-#         "api.cron.create_monthly_challenges",
-#     ),  # First day of each month
-# ]
 CRONJOBS = [
-    ('*/5 * * * *', 'challenges.cron.create_weekly_challenges'),  # Every 5 minutes
-    ('*/10 * * * *', 'challenges.cron.create_monthly_challenges'),  # Every 10 minutes
+    ('0 0 * * 1', 'challenges.cron.create_weekly_challenges'),  # Every Monday at midnight
+    ('0 0 1 * *', 'challenges.cron.create_monthly_challenges'), 
+    ('*/15 * * * *', 'django.core.management.call_command', ['check_create_challenges']),  # Every 15 minutes
+ # First day of each month
 ]
+# CRONJOBS = [
+#     ('*/5 * * * *', 'challenges.cron.create_weekly_challenges'),  # Every 5 minutes
+#     ('*/10 * * * *', 'challenges.cron.create_monthly_challenges'),  # Every 10 minutes
+# ]
 TAILWIND_APP_NAME = "theme"
 INTERNAL_IPS = ["127.0.0.1"]
 
