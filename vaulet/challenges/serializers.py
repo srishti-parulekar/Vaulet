@@ -20,6 +20,7 @@ class ChallengeSerializer(serializers.ModelSerializer):
             "target_amount",
             "current_amount",
             "participants",
+            "is_redeemed"
         ]
 
     def validate(self, data):

@@ -15,7 +15,7 @@ CHALLENGE_TEMPLATES = {
         'challenge_type': 'WEEKLY',
         'is_automated': True,
         'duration': timedelta(minutes=2),
-        'increase_factor': Decimal('1.1'),
+        'increase_factor': Decimal('1.001'),
         'min_amount': Decimal('50')
     },
     'MONTHLY': {
@@ -24,7 +24,7 @@ CHALLENGE_TEMPLATES = {
         'challenge_type': 'MONTHLY',
         'is_automated': True,
         'duration': timedelta(minutes=5),
-        'increase_factor': Decimal('1.2'),
+        'increase_factor': Decimal('1.001'),
         'min_amount': Decimal('200')
     }
 }

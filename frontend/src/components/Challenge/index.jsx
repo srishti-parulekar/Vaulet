@@ -84,25 +84,25 @@ const Challenge = ({ challenge, onContributionSuccess }) => {
       <p>{challenge.description}</p>
 
 
-      {isCompleted ? (
-        <Button
-          variant="contained"
-          color="success"
-          onClick={handleRedeem}
-          disabled={isSubmitting || challenge.is_redeemed}
-        >
-          {challenge.is_redeemed ? 'Redeemed' : isSubmitting ? 'Redeeming...' : 'Redeem'}
-        </Button>
-      ) : (
-        <Button
-          variant="contained"
-          style={{backgroundColor: "rgb(60, 72, 21)"}}
-          onClick={handleOpen}
-          disabled={isSubmitting}
-        >
-          Contribute
-        </Button>
-      )}
+      {isCompleted && !challenge.is_redeemed ? (
+  <Button
+    variant="contained"
+    color="success"
+    onClick={handleRedeem}
+    disabled={isSubmitting}
+  >
+    {isSubmitting ? 'Redeeming...' : 'Redeem'}
+  </Button>
+) : (
+  <Button
+    variant="contained"
+    style={{ backgroundColor: "rgb(60, 72, 21)" }}
+    onClick={handleOpen}
+    disabled={isSubmitting || challenge.is_redeemed}
+  >
+    {challenge.is_redeemed ? 'Redeemed' : 'Contribute'}
+  </Button>
+)}
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle className="hero-title--gradient">{challenge.title}</DialogTitle>
