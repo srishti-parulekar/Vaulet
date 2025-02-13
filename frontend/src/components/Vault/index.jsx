@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./Vault.css";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -7,16 +6,64 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
 import api from "../../api";
 import { Chart as ChartJS } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 
 function Vault({ vault, onDelete, onUpdate }) {
-  const formattedDate = new Date(vault.created_at).toLocaleDateString("en-US");
   const [open, setOpen] = useState(false);
   const [contributionAmount, setContributionAmount] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const labels = vault.monthly_data?.map((item) => item.month) || [];
+  const contributions = vault.monthly_data?.map((item) => item.contribution) || [];
+  const formattedDate = new Date(vault.created_at).toLocaleDateString("en-US");
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
+        ticks: {
+          color: 'white'
+        }
+      },
+      y: {
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
+        ticks: {
+          color: 'white'
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: 'white'
+        }
+      }
+    }
+  };
+
+  const chartData = {
+    labels: labels,
+    datasets: [
+      {
+        label: "Contribution",
+        data: contributions,
+        borderColor: '#4CAF50',
+        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+        tension: 0.4,
+        fill: true,
+      },
+    ],
+  };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -32,7 +79,6 @@ function Vault({ vault, onDelete, onUpdate }) {
 
   const handleContributionSubmit = async (event) => {
     event.preventDefault();
-    
     if (!contributionAmount || isNaN(contributionAmount)) {
       setError("Please enter a valid amount");
       return;
@@ -49,12 +95,11 @@ function Vault({ vault, onDelete, onUpdate }) {
     setIsSubmitting(true);
     try {
       const response = await api.put(`/api/vault/${vault.id}/contribute/`, {
-        amount: parseFloat(contributionAmount)
+        amount: parseFloat(contributionAmount),
       });
-
       if (response.data) {
         handleClose();
-        onUpdate(); // Call the parent's update function
+        onUpdate();
       }
     } catch (error) {
       setError(error.response?.data?.error || "Failed to make contribution");
@@ -68,7 +113,7 @@ function Vault({ vault, onDelete, onUpdate }) {
     try {
       const response = await api.put(`/api/vault/${vault.id}/redeem/`);
       if (response.data) {
-        onUpdate(); // Call the parent's update function
+        onUpdate();
       }
     } catch (error) {
       alert(error.response?.data?.error || "Failed to redeem vault");
@@ -78,55 +123,170 @@ function Vault({ vault, onDelete, onUpdate }) {
   };
 
   const isCompleted = vault.current_amount >= vault.target_amount;
+  const progress = (vault.current_amount / vault.target_amount) * 100;
 
   return (
-<div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem" }}>
-<div style={{ display: "flex", justifyContent: "space-between" }}>
-        <p className="vault-title" style={{ paddingTop: "0.2rem" }}>{vault.title}</p>
-        <button style={{ fontSize: "1.5rem", background: "none" }} onClick={() => onDelete(vault.id)}>
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.05)',
+        borderRadius: '1rem',
+        padding: '1.5rem',
+        color: 'white',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)',
+      }}
+    >
+      <div style={{ 
+        display: "flex", 
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: '1rem'
+      }}>
+        <h3 style={{ 
+          margin: 0,
+          fontSize: '1.5rem',
+          fontWeight: '600'
+        }}>
+          {vault.title}
+        </h3>
+        <IconButton
+          onClick={() => onDelete(vault.id)}
+          sx={{
+            color: 'white',
+            '&:hover': {
+              background: 'rgba(255, 255, 255, 0.1)'
+            }
+          }}
+        >
           <MdOutlineDeleteOutline />
-        </button>
+        </IconButton>
       </div>
-      <p className="vault-description">{vault.description}</p>
-      <div className="vault-amounts">
-        <p className="vault-target-amount">
-          Target Amount: ${vault.target_amount}
-        </p>
-        <p className="vault-current-amount">
-          Current Amount: ${vault.current_amount}
-        </p>
-      </div>
-      <p className="vault-date">Created on: {formattedDate}</p>
-      <div className="line-chart">
-        
-      </div>
-      {isCompleted && !vault.is_redeemed ? (
-  <Button
-    variant="contained"
-    color="success"
-    onClick={handleRedeem}
-    disabled={isSubmitting}
-  >
-    {isSubmitting ? 'Redeeming...' : 'Redeem'}
-  </Button>
-) : (
-  <Button
-    variant="contained"
-    style={{ backgroundColor: "rgb(60, 72, 21)" }}
-    onClick={handleOpen}
-    disabled={isSubmitting || vault.is_redeemed}
-  >
-    {vault.is_redeemed ? 'Redeemed' : 'Contribute'}
-  </Button>
-)}
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle className="hero-title--gradient">{vault.title}</DialogTitle>
+      <p style={{ 
+        color: 'rgba(255, 255, 255, 0.7)',
+        marginBottom: '1.5rem'
+      }}>
+        {vault.description}
+      </p>
+
+      <div style={{ 
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: '1rem'
+      }}>
+        <div>
+          <p style={{ margin: '0.5rem 0', color: 'rgba(255, 255, 255, 0.7)' }}>
+            Target Amount
+          </p>
+          <p style={{ margin: 0, fontSize: '1.25rem' }}>
+            ${vault.target_amount}
+          </p>
+        </div>
+        <div>
+          <p style={{ margin: '0.5rem 0', color: 'rgba(255, 255, 255, 0.7)' }}>
+            Current Amount
+          </p>
+          <p style={{ margin: 0, fontSize: '1.25rem' }}>
+            ${vault.current_amount}
+          </p>
+        </div>
+      </div>
+
+      <div style={{ 
+        width: '100%',
+        height: '6px',
+        background: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: '3px',
+        marginBottom: '1rem'
+      }}>
+        <div style={{
+          width: `${progress}%`,
+          height: '100%',
+          background: '#4CAF50',
+          borderRadius: '3px',
+          transition: 'width 0.3s ease'
+        }} />
+      </div>
+
+      <div style={{ 
+        height: '200px',
+        marginBottom: '1.5rem'
+      }}>
+        <Line data={chartData} options={chartOptions} />
+      </div>
+
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <p style={{ 
+          margin: 0,
+          color: 'rgba(255, 255, 255, 0.7)',
+          fontSize: '0.875rem'
+        }}>
+          Created on: {formattedDate}
+        </p>
+
+        {isCompleted && !vault.is_redeemed ? (
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#4CAF50',
+              '&:hover': {
+                backgroundColor: '#45a049'
+              }
+            }}
+            onClick={handleRedeem}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Redeeming..." : "Redeem"}
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.2)'
+              }
+            }}
+            onClick={handleOpen}
+            disabled={isSubmitting || vault.is_redeemed}
+          >
+            {vault.is_redeemed ? "Redeemed" : "Contribute"}
+          </Button>
+        )}
+      </div>
+
+      <Dialog 
+        open={open} 
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            background: '#1a1a1a',
+            color: 'white',
+            padding: '1rem'
+          }
+        }}
+      >
+        <DialogTitle sx={{
+          color: '#4CAF50',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          paddingBottom: '1rem'
+        }}>
+          {vault.title}
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{ color: 'rgba(255, 255, 255, 0.7)', marginTop: '1rem' }}>
             Remaining amount to reach target: ₹{vault.target_amount - vault.current_amount}
           </DialogContentText>
-          <form onSubmit={handleContributionSubmit} style={formStyle}>
+          <form onSubmit={handleContributionSubmit} style={{
+            marginTop: '1.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem'
+          }}>
             <TextField
               label="Contribution Amount (₹)"
               fullWidth
@@ -138,27 +298,42 @@ function Vault({ vault, onDelete, onUpdate }) {
               error={!!error}
               helperText={error}
               disabled={isSubmitting}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: 'white',
+                  '& fieldset': {
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'rgba(255, 255, 255, 0.7)',
+                },
+                '& .MuiFormHelperText-root': {
+                  color: '#f44336',
+                },
+              }}
             />
-            <button
+            <Button
               variant="contained"
               type="submit"
               disabled={isSubmitting}
+              sx={{
+                backgroundColor: '#4CAF50',
+                '&:hover': {
+                  backgroundColor: '#45a049'
+                }
+              }}
             >
-              {isSubmitting ? 'Contributing...' : 'Save'}
-            </button>
+              {isSubmitting ? "Contributing..." : "Save"}
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
-
-const formStyle = {
-  marginTop: "20px",
-  display: "flex",
-  flexDirection: "column",
-  width: "100%",
-  gap: "10px",
-};
 
 export default Vault;
