@@ -2,6 +2,16 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 
+# class ExpenseData(models.Model):
+#     objects = models.Manager()
+#     expense = models.ForeignKey('Expense', on_delete=models.CASCADE, related_name='monthly_data')
+#     month = models.DateField()
+
+#     expense_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+#     class Meta: 
+#         unique_together = ['expense', 'month']
+#         ordering = ['-month']
 
 class Expense(models.Model):
     CATEGORY_CHOICES = [
@@ -33,6 +43,9 @@ class Expense(models.Model):
     date = models.DateField()
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # def get_monthly_data(self,months=6):
+    #     # getting last n months worth of data
 
     def __str__(self):
         return f"{self.user.username} - {self.name} - {self.amount}"

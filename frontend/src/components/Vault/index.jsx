@@ -12,15 +12,16 @@ import { Chart as ChartJS } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 
 function Vault({ vault, onDelete, onUpdate }) {
+
   const [open, setOpen] = useState(false);
   const [contributionAmount, setContributionAmount] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formattedDate = new Date(vault.created_at).toLocaleDateString("en-US");
 
   const labels = vault.monthly_data?.map((item) => item.month) || [];
   const contributions = vault.monthly_data?.map((item) => item.contribution) || [];
-  const formattedDate = new Date(vault.created_at).toLocaleDateString("en-US");
-
+  console.log(contributions);
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -28,41 +29,76 @@ function Vault({ vault, onDelete, onUpdate }) {
       x: {
         grid: {
           color: 'rgba(255, 255, 255, 0.1)',
+          drawBorder: false,
         },
         ticks: {
-          color: 'white'
+          color: 'white',
+          font: {
+            size: 12
+          }
         }
       },
       y: {
+        beginAtZero: true,
+        max: parseFloat(vault.target_amount), // Set maximum to target amount
         grid: {
           color: 'rgba(255, 255, 255, 0.1)',
+          drawBorder: false,
         },
         ticks: {
-          color: 'white'
+          color: 'white',
+          font: {
+            size: 12
+          },
+          callback: (value) => `$${value}`
         }
       }
     },
     plugins: {
       legend: {
+        display: true,
+        position: 'top',
         labels: {
-          color: 'white'
+          color: 'white',
+          font: {
+            size: 12
+          },
+          usePointStyle: true,
+          pointStyle: 'circle'
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: 'white',
+        bodyColor: 'white',
+        padding: 12,
+        displayColors: false,
+        callbacks: {
+          label: (context) => `Contribution: $${context.parsed.y}`
         }
       }
     }
   };
 
   const chartData = {
-    labels: labels,
+    labels,
     datasets: [
       {
-        label: "Contribution",
+        label: "Monthly Contributions",
         data: contributions,
         borderColor: '#4CAF50',
         backgroundColor: 'rgba(76, 175, 80, 0.2)',
+        borderWidth: 2,
+        pointBackgroundColor: '#4CAF50',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: '#4CAF50',
+        pointRadius: 4,
+        pointHoverRadius: 6,
         tension: 0.4,
         fill: true,
-      },
-    ],
+      }
+    ]
   };
 
   const handleOpen = () => setOpen(true);

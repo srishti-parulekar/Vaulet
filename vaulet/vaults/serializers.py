@@ -11,6 +11,8 @@ class MoneyVaultDataSerializer(serializers.ModelSerializer):
         ]
 
 class MoneyVaultSerializer(serializers.ModelSerializer):
+    monthly_data = serializers.SerializerMethodField()
+
     class Meta:
         model = MoneyVault
         fields = [
@@ -21,9 +23,10 @@ class MoneyVaultSerializer(serializers.ModelSerializer):
             "current_amount",
             "created_at",
             "user",
-            "is_redeemed"
+            "is_redeemed",
+            "monthly_data"
         ]
         extra_kwargs = {"user": {"read_only": True}}
 
-        def get_monthly_data(self, obj):
-            return obj.get_monthly_data()
+    def get_monthly_data(self, obj):  # <- Moved outside Meta
+        return obj.get_monthly_data()

@@ -9,7 +9,7 @@ class MoneyVaultData(models.Model):
     vault = models.ForeignKey('MoneyVault', on_delete=models.CASCADE, related_name="monthly_data")
     month = models.DateField()
 
-    contribution_amount = models.DecimalField(max_digits=10, decimal_places=0, default=0)
+    contribution_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     class Meta: 
         unique_together = ['vault', 'month']
@@ -49,8 +49,8 @@ class MoneyVault(models.Model):
         current_date = start_date
         while current_date<=end_date:
             result.append({
-                'month': current_date.strftime('%Y-%m'),
-                'contribution' : float(data_dict.get(current_date,0))
+                'month': current_date.strftime('%b %y'),  # Changed format here
+                'contribution' : float(data_dict.get(current_date.replace(day=1), 0))
             })
             current_date += relativedelta(months=1)
 
@@ -71,12 +71,13 @@ class MoneyVault(models.Model):
                 # sets the day to the first of the current month.
                 month_start = today.replace(day=1)
                 monthly_data, created = MoneyVaultData.objects.get_or_create(
-                    vault = self, 
-                    month = month_start
+                vault=self, 
+                month=month_start,
+                defaults={'contribution_amount': 0}  # Ensure default value
                 )
-                monthly_data.contribution_amount += amount 
-                monthly_data.save()
-
+                monthly_data.contribution_amount = models.F('contribution_amount') + amount
+                monthly_data.save(update_fields=['contribution_amount'])  # Optimized save
+                monthly_data.refresh_from_db()
                 personal_vault.save()
                 self.save()
             else:
@@ -94,11 +95,13 @@ class MoneyVault(models.Model):
             today = datetime.now().date()
             month_start= today.replace(day=1)
             monthly_data, created = MoneyVaultData.objects.get_or_create(
-                vault=self,
-                month=month_start
+            vault=self,
+            month=month_start,
+            defaults={'contribution_amount': 0}
             )
-            monthly_data.contribution_amount -= self.current_amount
-            monthly_data.save()
+            monthly_data.contribution_amount = models.F('contribution_amount') - self.current_amount
+            monthly_data.save(update_fields=['contribution_amount'])
+
 
             self.current_amount = 0.00
             personal_vault.save()
