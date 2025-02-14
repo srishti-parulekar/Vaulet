@@ -60,28 +60,23 @@ class MoneyVaultContributeView(generics.UpdateAPIView):
 
         try:
             amount = Decimal(amount)
-            personal_vault = request.user.personal_vault
-
-            if personal_vault.balance < amount:
-                return Response({"error": "Insufficient funds"}, status=400)
-
-            personal_vault.balance -= amount
-            vault.current_amount += amount
             
-            personal_vault.save()
-            vault.save()
+            # Use the model's contribute method instead of direct updates
+            vault.contribute(amount)
 
+            # Create transaction record
             Transaction.objects.create(
-                user = request.user,
-                transaction_type = "VAULT_CONTRIBUTION",
-                amount = amount,
-                description =f"Contributed to vault '{vault.title}'",
-                vault = vault
+                user=request.user,
+                transaction_type="VAULT_CONTRIBUTION",
+                amount=amount,
+                description=f"Contributed to vault '{vault.title}'",
+                vault=vault
             )
+
             return Response({
                 "message": "Contribution successful",
                 "vault_balance": vault.current_amount,
-                "personal_vault_balance": personal_vault.balance
+                "personal_vault_balance": request.user.personal_vault.balance
             })
         except ValueError as e:
             return Response({"error": str(e)}, status=400)

@@ -30,8 +30,42 @@ class MoneyVault(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vaults")
     is_redeemed = models.BooleanField(default=False)
 
-    def get_monthly_data(self,months=6):
+    def contribute(self, amount):
+        try:
+            personal_vault = self.user.personal_vault
+            if personal_vault.balance >= amount:
+                self.current_amount += amount
+                personal_vault.balance -= amount
+
+            # Update monthly data
+                today = datetime.now().date()
+                month_start = today.replace(day=1)
+            
+                monthly_data, created = MoneyVaultData.objects.get_or_create(
+                    vault=self,
+                    month=month_start,
+                    defaults={'contribution_amount': 0}
+                )
+            
+            # Update contribution amount
+                monthly_data.contribution_amount += amount
+                monthly_data.save()
+
+            # Save vault and personal vault changes
+                personal_vault.save()
+                self.save()
+            
+                return True
+            else:
+                raise ValueError("Insufficient funds in personal vault.")
+        except PersonalVault.DoesNotExist:
+            raise ValueError("User does not have a personal vault.")
+    
+
+    @property
+    def get_monthly_data(self):  # Changed to property
         # getting last n months worth of data
+        months = 6
         end_date = datetime.now().date().replace(day=1)
         start_date = end_date - relativedelta(months=months-1)
 
@@ -41,49 +75,20 @@ class MoneyVault(models.Model):
             month__lte=end_date
         ).order_by('month')
 
-        # creating a dictionary: 
+        # creating a dictionary
         data_dict = {data.month: data.contribution_amount for data in existing_data}
 
-        # generate all months in range: 
+        # generate all months in range
         result = []
         current_date = start_date
-        while current_date<=end_date:
+        while current_date <= end_date:
             result.append({
-                'month': current_date.strftime('%b %y'),  # Changed format here
-                'contribution' : float(data_dict.get(current_date.replace(day=1), 0))
+                'month': current_date.strftime('%b %y'),
+                'contribution': float(data_dict.get(current_date, 0))
             })
             current_date += relativedelta(months=1)
 
         return result
-    def contribute(self, amount):
-        """Method to handle contribution to a vault."""
-        # first we check the amount in the users personal vault to be sufficient
-        try:
-            personal_vault = self.user.personal_vault
-            if personal_vault.balance >= amount:
-                self.current_amount += amount
-                personal_vault.balance -= amount
-
-                # need to update the monthly data here
-                #  since the user is making a contribution
-
-                today = datetime.now().date()
-                # sets the day to the first of the current month.
-                month_start = today.replace(day=1)
-                monthly_data, created = MoneyVaultData.objects.get_or_create(
-                vault=self, 
-                month=month_start,
-                defaults={'contribution_amount': 0}  # Ensure default value
-                )
-                monthly_data.contribution_amount = models.F('contribution_amount') + amount
-                monthly_data.save(update_fields=['contribution_amount'])  # Optimized save
-                monthly_data.refresh_from_db()
-                personal_vault.save()
-                self.save()
-            else:
-                raise ValueError("Insufficient funds in personal vault.")
-        except PersonalVault.DoesNotExist:
-            raise ValueError("User does not have a personal vault.")
 
     def refund(self):
         """Refunding on cancellation of money vault"""
@@ -95,9 +100,9 @@ class MoneyVault(models.Model):
             today = datetime.now().date()
             month_start= today.replace(day=1)
             monthly_data, created = MoneyVaultData.objects.get_or_create(
-            vault=self,
-            month=month_start,
-            defaults={'contribution_amount': 0}
+                vault=self,
+                month=month_start,
+                defaults={'contribution_amount': 0}
             )
             monthly_data.contribution_amount = models.F('contribution_amount') - self.current_amount
             monthly_data.save(update_fields=['contribution_amount'])
