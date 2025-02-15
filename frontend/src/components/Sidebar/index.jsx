@@ -25,6 +25,7 @@ const Sidebar = ({ open, onSelectItem }) => {
       sx={{
         borderRight: "0.01px solid #ffd9009d", // Fix: Apply border properly
         height: "100vh",
+        backgroundColor: "rgb(0,0,0)"
       }}
     >
       <List className="sidebar-list" style={{color : "#ffd9009d"}}>
@@ -35,20 +36,20 @@ const Sidebar = ({ open, onSelectItem }) => {
               onClick={() => handleItemClick(text)}
             >
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {index % 2 === 0 ? <InboxIcon style={{color: "#ffd9009d"}}/> : <MailIcon style={{color: "#ffd9009d"}}/>}
               </ListItemIcon>
               <ListItemText primary={text} sx={{ fontSize: "1rem" }} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
-      <Divider />
+      <Divider style={{backgroundColor: "#ffd9009d"}}/>
       <List className="sidebar-list" style={{color : "#ffd9009d"}}>
         {["All mail", "Trash", "Spam"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton className="sidebar-list-item-button">
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {index % 2 === 0 ? <InboxIcon style={{color: "#ffd9009d"}}/> : <MailIcon style={{color: "#ffd9009d"}}/>}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>

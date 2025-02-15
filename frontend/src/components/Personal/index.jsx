@@ -8,7 +8,14 @@ import TextField from "@mui/material/TextField";
 import api from "../../api";
 import "./Personal.css"
 import Transactions from "../Transactions";
-
+// import award from "../../assets/award.png";
+// import award2 from "../../assets/award2.png";
+// import award3 from "../../assets/award3.png";
+// import award4 from "../../assets/award4.png";
+// import award5 from "../../assets/award5.png";
+import award6 from "../../assets/award6.png";
+import award7 from "../../assets/award7.png";
+import award8 from "../../assets/award8.png";
 
 const Personal = () => {
 
@@ -89,8 +96,11 @@ const Personal = () => {
         <div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem", marginBottom: "1rem"}}>
           <h4>Total Balance</h4>
           <p>${state.balance}</p>
-          
-          <p>123-456-7890 | April 2028</p>
+
+          <img src={award6}/>
+          <img src={award7}/>
+          <img src={award8}/>
+
           <Button
             variant="contained"
             onClick={handleOpenContributionPopup}
@@ -101,6 +111,7 @@ const Personal = () => {
                 backgroundColor: "rgb(75, 111, 68)", // Slightly darker green on hover
               },
               marginInlineRight: "2rem",
+              marginTop: "1rem"
             }}
           >
             Contribute to Personal Vault

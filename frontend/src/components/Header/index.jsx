@@ -15,7 +15,8 @@ const Header = ({ handleDrawerOpen }) => {
     <header 
       style={{
         borderBottom: "0.01px solid #ffd9009d", // One-sided bottom border
-        width: "100%", // Ensure it spans full width
+        width: "100%",
+        backgroundColor: "rgb(0,0,0)" // Ensure it spans full width
       }}
     >
       <nav>
