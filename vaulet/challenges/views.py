@@ -125,6 +125,7 @@ class ChallengeContributeView(generics.UpdateAPIView):
                 "target_amount": challenge.target_amount,
                 "is_completed": challenge.current_amount >= challenge.target_amount
             })
+        
         except ValueError as e:
             return Response({"error": str(e)}, status=400)
         except PersonalVault.DoesNotExist:

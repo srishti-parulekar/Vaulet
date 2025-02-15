@@ -7,14 +7,13 @@ from decimal import Decimal
 from .models import Challenge
 from api.models import UserPerformance
 
-# Challenge templates with proper durations
 CHALLENGE_TEMPLATES = {
     'WEEKLY': {
         'title': 'Weekly Savings Challenge',
         'description': 'Save a specified amount over the course of this week to build healthy financial habits.',
         'challenge_type': 'WEEKLY',
         'is_automated': True,
-        'duration': timedelta(minutes=2),
+        'duration': timedelta(days=7),  # Changed from minutes to days
         'increase_factor': Decimal('1.001'),
         'min_amount': Decimal('50')
     },
@@ -23,7 +22,7 @@ CHALLENGE_TEMPLATES = {
         'description': 'Set a goal and work throughout the month to reach your savings target.',
         'challenge_type': 'MONTHLY',
         'is_automated': True,
-        'duration': timedelta(minutes=5),
+        'duration': timedelta(days=30),  # Changed from minutes to days
         'increase_factor': Decimal('1.001'),
         'min_amount': Decimal('200')
     }
@@ -37,7 +36,6 @@ def calculate_target(current_contributions, increase_factor, min_amount):
         current_contributions * increase_factor,
         min_amount
     )
-
 def create_challenge(challenge_type, user_perf):
     """Create a new challenge for a user based on their performance"""
     template = CHALLENGE_TEMPLATES[challenge_type]
@@ -49,9 +47,15 @@ def create_challenge(challenge_type, user_perf):
         challenge_type=challenge_type,
         is_automated=True,
         end_date__gt=current_time
-    ).exists()
+    )
     
-    if not existing_challenge:
+    # If there's an existing challenge that's about to expire (less than 1 day left),
+    # we'll create a new one
+    create_new = not existing_challenge.exists() or \
+                 (existing_challenge.exists() and 
+                  (existing_challenge.first().end_date - current_time).days < 1)
+    
+    if create_new:
         # Calculate target based on challenge type
         contributions = (user_perf.weekly_contributions 
                        if challenge_type == 'WEEKLY' 
@@ -81,6 +85,7 @@ def create_challenge(challenge_type, user_perf):
         
         return True
     return False
+
 
 def create_weekly_challenges():
     """Create weekly challenges for all users"""

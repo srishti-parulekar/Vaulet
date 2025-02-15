@@ -15,3 +15,6 @@ sqlalchemy
 phidata
 google-generativeai
 duckduckgo-search
+celery==5.3.6
+django-celery-beat==2.5.0
+redis

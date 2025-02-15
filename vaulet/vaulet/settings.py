@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+from celery.schedules import crontab
 
 load_dotenv()
 
@@ -71,13 +72,42 @@ INSTALLED_APPS = [
     'expenses',
     'vaults',
 ]
-CRONJOBS = [
-    ('0 0 * * 1', 'challenges.cron.create_weekly_challenges'),  # Every Monday at midnight
-    ('0 0 1 * *', 'challenges.cron.create_monthly_challenges'), 
-    ('*/15 * * * *', 'django.core.management.call_command', ['check_create_challenges']),  # Every 15 minutes
- # First day of each month
-]
+# CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+# CELERY_TASK_TRACK_STARTED = True
+# CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes timeout
+CELERY_BEAT_SCHEDULE = {
+    # 'create-weekly-challenges': {
+    #     'task': 'challenges.tasks.create_scheduled_weekly_challenges',
+    #     'schedule': crontab(minute=0, hour=0, day_of_week='monday'),
+    # },
+    # 'create-monthly-challenges': {
+    #     'task': 'challenges.tasks.create_scheduled_monthly_challenges',
+    #     'schedule': crontab(minute=0, hour=0, day_of_month='1'),
+    # },
+    'create-weekly-challenges': {
+        'task': 'challenges.tasks.create_scheduled_weekly_challenges',
+        'schedule': crontab(minute='*/1'),
+    },
+    'create-monthly-challenges': {
+        'task': 'challenges.tasks.create_scheduled_monthly_challenges',
+        'schedule': crontab(minute='*/5'),
+    },
+}
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'ASIA/KOLKATA'
+
 # CRONJOBS = [
+#     ('0 0 * * 1', 'challenges.cron.create_weekly_challenges'),  # Every Monday at midnight
+#     ('0 0 1 * *', 'challenges.cron.create_monthly_challenges'), 
+#     ('*/15 * * * *', 'django.core.management.call_command', ['check_create_challenges']),  # Every 15 minutes
+#  # First day of each month
+# ]
+# # CRONJOBS = [
 #     ('*/5 * * * *', 'challenges.cron.create_weekly_challenges'),  # Every 5 minutes
 #     ('*/10 * * * *', 'challenges.cron.create_monthly_challenges'),  # Every 10 minutes
 # ]

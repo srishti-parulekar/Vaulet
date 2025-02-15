@@ -6,4 +6,3 @@ class ChallengesConfig(AppConfig):
 
     def ready(self):
         import challenges.signals
-        
