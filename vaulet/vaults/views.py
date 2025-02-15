@@ -14,7 +14,8 @@ from transactions.models import Transaction
 class MoneyVaultListCreate(generics.ListCreateAPIView):
     serializer_class = MoneyVaultSerializer
     permission_classes = [IsAuthenticated]
-
+    ordering_fields = ['created_at']
+    ordering = ['-created_at']
     def get_queryset(self):
         # to get the user that is actually interacting with this view
         user = self.request.user

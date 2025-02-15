@@ -89,6 +89,7 @@ const Personal = () => {
         <div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem", marginBottom: "1rem"}}>
           <h4>Total Balance</h4>
           <p>${state.balance}</p>
+          
           <p>123-456-7890 | April 2028</p>
           <Button
             variant="contained"
