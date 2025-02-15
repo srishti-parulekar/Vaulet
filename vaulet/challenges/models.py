@@ -13,8 +13,8 @@ CHALLENGE_TYPE_CHOICES = [
 ]
 
 class ChallengeData(models.Model):
+    challenge = models.ForeignKey('Challenge', on_delete=models.CASCADE, related_name="monthly_data")  
     objects = models.Manager()
-    challenge = models.ForeignKey('Challenge', on_delete=models.CASCADE)
     
     month = models.DateField()
     contribution_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -62,10 +62,10 @@ class Challenge(models.Model):
                 today = datetime.now().date()
                 month_start = today.replace(day=1)
 
-                monthly_data, created = ChallengeData.objects.create(
+                monthly_data, created = ChallengeData.objects.get_or_create(
                     challenge=self,
                     month=month_start,
-                    defaults= {'contribution_amount':0}
+                    defaults={'contribution_amount': 0}
                 )
 
                 monthly_data.contribution_amount += amount
@@ -97,7 +97,7 @@ class Challenge(models.Model):
         ).order_by('month')
 
         # creating a dictionary 
-        data_dict = {data.month: data.contribution_amount for data in existing_data}
+        data_dict = {data.month.strftime('%Y-%m-%d'): data.contribution_amount for data in existing_data}
 
         # generate all months in range
         result = []
@@ -105,8 +105,8 @@ class Challenge(models.Model):
 
         while current_date <= end_date:
             result.append({
-                'month': current_date.strftime('%b %y'),
-                'contribution': float(data_dict.get(current_date, 0))
+            'month': current_date.strftime('%b %y'),
+            'contribution': float(data_dict.get(current_date.strftime('%Y-%m-%d'), 0))
             })
             current_date += relativedelta(months=1)
 
@@ -123,7 +123,7 @@ class Challenge(models.Model):
             today = datetime.now().date()
             month_start = today.replace(day=1)
 
-            monthly_data, created = ChallengeData.objects.create(
+            monthly_data, created = ChallengeData.objects.get_or_create(
                 challenge=self,
                 month=month_start,
                 defaults={'contribution_amount': 0}

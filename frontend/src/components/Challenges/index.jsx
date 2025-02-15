@@ -22,27 +22,22 @@ const Challenges = () => {
   }, []);
 
   return (
-    <div
-      className="account-balance-container"
-      style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}
-    >
-      <div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem", marginRight: "1.5rem", minHeight: "40rem", width: "50%"}}>
-        <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
-          Active Challenges
-        </h2>
+    
+    <>
         <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center"
-          }}
+          style={{ 
+            display: "flex", 
+            flexWrap: "wrap", 
+            gap: "1rem",
+            justifyContent: "space-between"
+        }}
           className="account-balance"
         >
           {challenges.active_challenges.length > 0 ? (
             challenges.active_challenges.map((challenge) => (
-              <Challenge 
-                challenge={challenge} 
-                key={challenge.id} 
+              <Challenge
+                challenge={challenge}
+                key={challenge.id}
                 onContributionSuccess={getChallenges}
               />
             ))
@@ -50,22 +45,22 @@ const Challenges = () => {
             <p>No active challenges available at the moment.</p>
           )}
         </div>
-      </div>
-      <div
-  className="account-balance"
-  style={{
-    border: "0.05rem solid #ffffff",
-    padding: "0.75rem",
-    borderRadius: "0.5rem",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-evenly",
-    gap: "1rem",
-    width: "50%"
-  }}
->
-  {/* Completed Challenges */}
-  <div>
+      
+      {/* <div
+        className="account-balance"
+        style={{
+          border: "0.05rem solid #ffffff",
+          padding: "0.75rem",
+          borderRadius: "0.5rem",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-evenly",
+          gap: "1rem",
+          width: "50%",
+        }}
+      > */}
+      {/* Completed Challenges */}
+      {/* <div>
     <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
       Completed Challenges
     </h2>
@@ -82,39 +77,38 @@ const Challenges = () => {
         <p>No completed challenges available at the moment.</p>
       )}
     </div>
-  </div>
+  </div> */}
 
-  {/* Separator */}
-  <div
+      {/* Separator */}
+      {/* <div
     style={{
       height: "0.05rem",
       backgroundColor: "#ffffff",
       width: "100%",
     }}
-  ></div>
+  ></div> */}
 
-  {/* Expired Challenges */}
-  <div>
-    <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
-      Expired Challenges
-    </h2>
-    <div className="account-balance">
-      {challenges.expired_challenges.length > 0 ? (
-        challenges.expired_challenges.map((challenge) => (
-          <Challenge
-            challenge={challenge}
-            key={challenge.id}
-            onContributionSuccess={getChallenges}
-          />
-        ))
-      ) : (
-        <p>No expired challenges available at the moment.</p>
-      )}
-    </div>
-  </div>
-</div>
-
-    </div>
+      {/* Expired Challenges */}
+      {/* <div>
+          <h2 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
+            Expired Challenges
+          </h2>
+          <div className="account-balance">
+            {challenges.expired_challenges.length > 0 ? (
+              challenges.expired_challenges.map((challenge) => (
+                <Challenge
+                  challenge={challenge}
+                  key={challenge.id}
+                  onContributionSuccess={getChallenges}
+                />
+              ))
+            ) : (
+              <p>No expired challenges available at the moment.</p>
+            )}
+          </div>
+        </div> */}
+      {/* </div> */}
+    </>
   );
 };
 
