@@ -7,13 +7,15 @@ import Create from "../../components/Create";
 import MyVaults from "../../components/MyVaults";
 import Challenges from "../../components/Challenges";
 import ExpenseTable from "../../components/ExpenseTable";
+import StatsDashboard from "../../components/StatsDashboard";
 function Home() {
   const componentMap = {
     Personal: Personal,
     MyVaults: MyVaults,
     Create: Create,
     Challenges: Challenges,
-    Expenses: ExpenseTable
+    Expenses: ExpenseTable,
+    StatsDashboard: StatsDashboard
   };
 
   const [open, setOpen] = useState(true);

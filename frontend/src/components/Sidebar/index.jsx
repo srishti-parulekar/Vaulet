@@ -29,7 +29,7 @@ const Sidebar = ({ open, onSelectItem }) => {
       }}
     >
       <List className="sidebar-list" style={{color : "#ffd9009d"}}>
-        {["Personal", "Challenges", "MyVaults", "Expenses", "Create"].map((text, index) => (
+        {["Personal", "Challenges", "MyVaults", "Expenses", "Create", "StatsDashboard"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton 
               className="sidebar-list-item-button"
