@@ -1,44 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto';
-import "./StatsDashboard.css"
+import "./StatsDashboard.css";
+import api from "../../api"
+
 const StatsDashboard = () => {
-  // Data definitions remain the same
-  const performanceData = {
-    total_contributions: 15750.50,
-    monthly_contributions: 2430.75,
-    weekly_contributions: 575.25
-  };
-
-  const contributionData = [
-    { month: 'Jan 24', amount: 2350 },
-    { month: 'Feb 24', amount: 2800 },
-    { month: 'Mar 24', amount: 3200 },
-    { month: 'Apr 24', amount: 2900 },
-    { month: 'May 24', amount: 3400 },
-    { month: 'Jun 24', amount: 3100 }
-  ];
-
-  const expenseData = [
-    { category: 'Food & Dining', amount: 850.50, necessity_level: 4 },
-    { category: 'Transportation', amount: 450.75, necessity_level: 3 },
-    { category: 'Utilities', amount: 320.25, necessity_level: 4 },
-    { category: 'Shopping', amount: 675.00, necessity_level: 2 },
-    { category: 'Entertainment', amount: 250.00, necessity_level: 1 },
-    { category: 'Healthcare', amount: 425.75, necessity_level: 4 },
-    { category: 'Education', amount: 550.00, necessity_level: 3 }
-  ];
+  const [statsData, setStatsData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const chartRefs = {
     contribution: useRef(null),
     expense: useRef(null),
     necessity: useRef(null)
   };
-
-  const scatterData = expenseData.map(item => ({
-    x: item.necessity_level,
-    y: item.amount,
-    label: item.category
-  }));
 
   const COLORS = {
     primary: 'rgba(76, 175, 80, 0.9)',
@@ -54,10 +28,36 @@ const StatsDashboard = () => {
     ]
   };
 
+  const contributionData = [
+    { month: 'Jan 24', amount: 2350 },
+    { month: 'Feb 24', amount: 2800 },
+    { month: 'Mar 24', amount: 3200 },
+    { month: 'Apr 24', amount: 2900 },
+    { month: 'May 24', amount: 3400 },
+    { month: 'Jun 24', amount: 3100 }
+  ];
+
+  const fetchStats = async () => {
+    try {
+      const { data } = await api.get('/expenses/stats/');
+      setStatsData(data);
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to fetch stats.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Chart initialization code remains the same
+    fetchStats();
+  }, []);
+
+  useEffect(() => {
+    if (!statsData) return;
+
     const charts = {};
     
+    // Contribution chart remains the same as it uses static data
     charts.contribution = new Chart(chartRefs.contribution.current, {
       type: 'line',
       data: {
@@ -103,13 +103,19 @@ const StatsDashboard = () => {
       }
     });
 
+    // Expense chart using API data
     charts.expense = new Chart(chartRefs.expense.current, {
       type: 'polarArea',
       data: {
-        labels: expenseData.map(d => d.category),
+        labels: statsData.category_breakdown.map(d => d.category
+          .replace('_', ' ')
+          .toLowerCase()
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')),
         datasets: [{
-          data: expenseData.map(d => d.amount),
-          backgroundColor: COLORS.chartGradient
+          data: statsData.category_breakdown.map(d => d.total),
+          backgroundColor: COLORS.chartGradient.slice(0, statsData.category_breakdown.length)
         }]
       },
       options: {
@@ -134,12 +140,16 @@ const StatsDashboard = () => {
       }
     });
 
+    // Necessity chart using API data
     charts.necessity = new Chart(chartRefs.necessity.current, {
       type: 'scatter',
       data: {
         datasets: [{
           label: 'Expenses by Necessity',
-          data: scatterData,
+          data: statsData.necessity_breakdown.map(item => ({
+            x: item.necessity_level,
+            y: item.total
+          })),
           backgroundColor: COLORS.primary,
           pointRadius: 10,
           pointHoverRadius: 15,
@@ -164,9 +174,8 @@ const StatsDashboard = () => {
           tooltip: {
             callbacks: {
               label: (context) => {
-                const point = scatterData[context.dataIndex];
+                const point = context.raw;
                 return [
-                  `${point.label}`,
                   `Amount: $${point.y.toLocaleString()}`,
                   `Level: ${['Low', 'Medium', 'High', 'Essential'][point.x - 1]}`
                 ];
@@ -209,7 +218,21 @@ const StatsDashboard = () => {
     return () => {
       Object.values(charts).forEach(chart => chart.destroy());
     };
-  }, []);
+  }, [statsData]);
+
+  if (loading) {
+    return <div className="dashboard">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="dashboard">Error: {error}</div>;
+  }
+
+  const performanceData = {
+    current_month: statsData.current_month_total,
+    last_month: statsData.last_month_total,
+    month_change: statsData.month_over_month_change
+  };
 
   return (
     <div className="dashboard">
@@ -249,8 +272,6 @@ const StatsDashboard = () => {
           </div>
         </div>
       </div>
-
-      
     </div>
   );
 };
