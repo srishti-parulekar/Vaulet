@@ -29,7 +29,7 @@ const Sidebar = ({ open, onSelectItem }) => {
       }}
     >
       <List className="sidebar-list" style={{color : "#ffd9009d"}}>
-        {["Personal", "Challenges", "MyVaults", "Expenses", "Create", "StatsDashboard"].map((text, index) => (
+        {["Vaulter","Personal", "Challenges", "MyVaults", "Expenses", "Create", "StatsDashboard"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton 
               className="sidebar-list-item-button"
@@ -45,7 +45,7 @@ const Sidebar = ({ open, onSelectItem }) => {
       </List>
       <Divider style={{backgroundColor: "#ffd9009d"}}/>
       <List className="sidebar-list" style={{color : "#ffd9009d"}}>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
+        {["Trash", "Spam"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton className="sidebar-list-item-button">
               <ListItemIcon>

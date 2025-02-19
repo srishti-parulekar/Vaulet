@@ -8,6 +8,7 @@ import MyVaults from "../../components/MyVaults";
 import Challenges from "../../components/Challenges";
 import ExpenseTable from "../../components/ExpenseTable";
 import StatsDashboard from "../../components/StatsDashboard";
+import Chat from "../../components/Chat";
 function Home() {
   const componentMap = {
     Personal: Personal,
@@ -15,7 +16,8 @@ function Home() {
     Create: Create,
     Challenges: Challenges,
     Expenses: ExpenseTable,
-    StatsDashboard: StatsDashboard
+    StatsDashboard: StatsDashboard,
+    Vaulter: Chat
   };
 
   const [open, setOpen] = useState(true);
