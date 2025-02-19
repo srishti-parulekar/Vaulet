@@ -39,7 +39,7 @@ const StatsDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const { data } = await api.get('/expenses/stats/');
+      const { data } = await api.get('/api/expenses/stats/');
       setStatsData(data);
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to fetch stats.');
