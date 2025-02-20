@@ -6,7 +6,7 @@ const Chat = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hello! I'm your Vaulet assistant. I can help with budgeting, transactions, vaults, and challenges. How can I assist you today?",
+      text: "Welcome to Vaulet! I'm your personal financial assistant. How can I help with your budgeting, vaults, or challenges today?",
       sender: 'bot',
       timestamp: new Date()
     }
@@ -109,14 +109,14 @@ const Chat = () => {
   };
 
   return (
-    <div className="chat-wrapper">
+    <>
       <div className="chat-header">
         <div className="chat-header-icon">
           <Bot size={24} />
         </div>
         <div className="chat-title">
-          <h2>Vaulet Assistant</h2>
-          <p>Your financial companion</p>
+          <h2>Vaulter, Your Vaulet Assistant</h2>
+          <p>Your golden path to financial success</p>
         </div>
         <div className="user-id-container">
           <input
@@ -186,7 +186,7 @@ const Chat = () => {
           <Send size={20} />
         </button>
       </form>
-    </div>
+    </>
   );
 };
 
