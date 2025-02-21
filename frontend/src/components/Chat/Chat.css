@@ -83,6 +83,7 @@
   
   /* Chat Messages */
   .chat-messages {
+    height: 400px; /* Adjust as needed */
     flex: 1;
     overflow-y: auto;
     padding: 1.5rem;

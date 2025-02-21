@@ -24,7 +24,6 @@ const Sidebar = ({ open, onSelectItem }) => {
       className="sidebar-container"
       sx={{
         borderRight: "0.01px solid #ffd9009d", // Fix: Apply border properly
-        height: "100vh",
         backgroundColor: "rgb(0,0,0)"
       }}
     >

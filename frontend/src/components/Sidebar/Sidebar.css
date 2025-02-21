@@ -4,6 +4,8 @@
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background-color);
+    overflow: hidden;
+    position: fixed;
   }
   
   .form-input {
@@ -32,7 +34,6 @@
   
   .sidebar-container {
     color: --primary-color;
-    min-height: 100vh;
     z-index: 1;
     position: relative;
   }
