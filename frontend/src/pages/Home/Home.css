@@ -3,8 +3,7 @@
 body {
   line-height: 1.6;
   background-color: var(--background-color);
-  overflow-x: hidden;
-  overflow-y: hidden; /* Allow vertical scrolling */
+  overflow: hidden;
 }
   
   
@@ -56,9 +55,11 @@ body {
   }
   
   .content-container {
-    flex-grow: 1;
-    padding: 1rem;
-  }
+    flex-grow: 1; /* Allows it to take the remaining space */
+    margin-left: 250px; /* Pushes content to the right to avoid overlap */
+    padding: 20px; /* Ensures proper spacing */
+    width: calc(100% - 250px); /* Adjusts width dynamically */
+}
   
   form {
     max-width: 600px;
@@ -67,5 +68,6 @@ body {
   
 .main-content{
   margin: 0px;
-  padding: 0px;
+  padding-left: 20px;
+  padding-top: 60px; /* Push content below fixed header */
 } 

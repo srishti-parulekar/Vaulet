@@ -3,6 +3,8 @@
   --primary-color: #ffd9009d;
   --secondary-color: rgba(15, 58, 7, 0.476);
   --text-color: rgb(50, 94, 56);
+  width: 100%;
+  
 }
 
 * {

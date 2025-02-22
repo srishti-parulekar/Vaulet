@@ -5,7 +5,6 @@
     color: var(--text-color);
     background-color: var(--background-color);
     overflow: hidden;
-    position: fixed;
   }
   
   .form-input {
@@ -26,17 +25,22 @@
     color: white;
     cursor: pointer;
   }
-  
+  .sidebar-container {
+    position: fixed;
+    left: 0;
+    height: calc(100vh - 60px); /* Prevents it from overlapping the header */
+    width: 250px;
+    background-color: rgb(0, 0, 0);
+    border-right: 0.01px solid #ffd9009d;
+    z-index: 1000; /* Lower than header */
+    overflow-y: auto;
+}
   .cta-button:hover {
     background-color: #3a5a35;
     transform: scale(1.05);
   }
+
   
-  .sidebar-container {
-    color: --primary-color;
-    z-index: 1;
-    position: relative;
-  }
   
   .list-item-button {
     cursor: pointer;

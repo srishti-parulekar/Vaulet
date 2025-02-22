@@ -17,7 +17,7 @@ function Home() {
     Challenges: Challenges,
     Expenses: ExpenseTable,
     StatsDashboard: StatsDashboard,
-    Vaulter: Chat
+    Vaulter: Chat,
   };
 
   const [open, setOpen] = useState(true);
@@ -36,7 +36,13 @@ function Home() {
       <Header handleDrawerOpen={handleDrawerOpen} />
       <div className="main-layout">
         <Sidebar open={open} onSelectItem={handleSidebarItemClick} />
-        <div className="content-container">
+        <div
+          className="content-container"
+          style={{
+            marginLeft: open ? "250px" : "0px",
+            transition: "margin 0.3s ease-in-out",
+          }}
+        >
           <div className="topBlur"></div>
           <div className="bottomBlur"></div>
           <main className="main-content">
