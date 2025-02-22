@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@mui/material";
 import { CgMenuGridR } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
-import "./Header.css"; 
+import "./Header.css";
 
 const Header = ({ handleDrawerOpen }) => {
   const navigate = useNavigate();
@@ -12,11 +12,12 @@ const Header = ({ handleDrawerOpen }) => {
   };
 
   return (
-    <header 
+    <header
+      className="fixed top-0 left-0 right-0 z-50"
       style={{
-        borderBottom: "0.01px solid #ffd9009d", // One-sided bottom border
-        width: "100%",
-        backgroundColor: "rgb(0,0,0)" // Ensure it spans full width
+        borderBottom: "0.01px solid #ffd9009d",
+        backgroundColor: "rgb(0,0,0)",
+        height: "64px",
       }}
     >
       <nav>

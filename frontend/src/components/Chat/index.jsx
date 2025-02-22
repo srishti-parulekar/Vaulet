@@ -117,23 +117,13 @@ const Chat = () => {
   return (
     <>
       <div className="chat-header">
-        <div className="chat-header-icon">
+        <div className="chat-header-icon" style={{backgroundColor:"#ffffff"}}>
           <Bot size={24} />
         </div>
-        <div className="chat-title">
-          <h2>Vaulter, Your Vaulet Assistant</h2>
-          <p>Your golden path to financial success</p>
+        <div>
+          <h1 className="hero-title--gradient" style={{ fontSize: "2rem" }}>Vaulter, Your Vaulet Assistant</h1>
         </div>
-        <div className="user-id-container">
-          <input
-            type="text"
-            placeholder="Your User ID"
-            value={userId}
-            onChange={handleUserIdChange}
-            className="user-id-input"
-          />
-          <Info size={16} className="user-id-info" title="Enter your User ID to get personalized recommendations" />
-        </div>
+        
       </div>
       
       <div 
@@ -156,7 +146,7 @@ const Chat = () => {
         ))}
         {loading && (
           <div className="message-container bot-message">
-            <div className="message-avatar">
+            <div className="message-avatar" >
               <Bot size={20} />
             </div>
             <div className="message-content typing-indicator">

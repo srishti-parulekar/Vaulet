@@ -32,26 +32,27 @@ function Home() {
   };
 
   return (
-    <>
-      <Header handleDrawerOpen={handleDrawerOpen} />
-      <div className="main-layout">
-        <Sidebar open={open} onSelectItem={handleSidebarItemClick} />
-        <div
-          className="content-container"
+    <div className="flex h-screen overflow-hidden bg-black">
+      <Header handleDrawerOpen={() => setOpen(!open)} />
+      <div className="flex flex-1 pt-16"> {/* Added pt-16 to account for fixed header */}
+        <Sidebar open={open} onSelectItem={setSelectedItem} />
+        <div 
+          className="flex-1 relative transition-all duration-300 ease-in-out"
           style={{
-            marginLeft: open ? "250px" : "0px",
-            transition: "margin 0.3s ease-in-out",
+            marginLeft: open ? "250px" : "0px"
           }}
         >
-          <div className="topBlur"></div>
-          <div className="bottomBlur"></div>
-          <main className="main-content">
-            {/* <h1>Selected: {selectedItem}</h1> */}
-            <SelectedComponent />
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-purple-900/30 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-purple-900/30 to-transparent pointer-events-none" />
+          
+          <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+            <div className="p-6">
+              <SelectedComponent />
+            </div>
           </main>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
