@@ -32,9 +32,10 @@ function Home() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-black">
+    <div className="flex h-screen overflow-hidden ">
+      
       <Header handleDrawerOpen={() => setOpen(!open)} />
-      <div className="flex flex-1 pt-16"> {/* Added pt-16 to account for fixed header */}
+      <div className="flex flex-1 pt-16"> 
         <Sidebar open={open} onSelectItem={setSelectedItem} />
         <div 
           className="flex-1 relative transition-all duration-300 ease-in-out"

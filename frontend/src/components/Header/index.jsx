@@ -18,6 +18,7 @@ const Header = ({ handleDrawerOpen }) => {
         borderBottom: "0.01px solid #ffd9009d",
         backgroundColor: "rgb(0,0,0)",
         height: "64px",
+
       }}
     >
       <nav>
