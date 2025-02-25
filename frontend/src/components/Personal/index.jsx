@@ -93,14 +93,16 @@ const Personal = () => {
         <h3 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
           My Personal Vault
         </h3>
-        <div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem", marginBottom: "1rem"}}>
+        <div className="account-balance" style={{ border: "0.05rem solid #ffffff", padding: "0.75rem", borderRadius: "0.5rem", marginBottom: "1rem",
+          display: "flex", flexDirection: "column"
+        }}>
           <h4>Total Balance</h4>
           <p>${state.balance}</p>
-
+        <div style={{display: "flex"}}>
           <img src={award6}/>
           <img src={award7}/>
           <img src={award8}/>
-
+          </div>
           <Button
             variant="contained"
             onClick={handleOpenContributionPopup}

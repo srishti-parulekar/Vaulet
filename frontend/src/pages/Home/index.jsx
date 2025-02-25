@@ -46,7 +46,8 @@ function Home() {
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-purple-900/30 to-transparent pointer-events-none" />
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-purple-900/30 to-transparent pointer-events-none" />
           
-          <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+          <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
+          style={{marginTop: "64px"}}>
             <div className="p-6">
               <SelectedComponent />
             </div>
