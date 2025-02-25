@@ -41,25 +41,20 @@ def create_challenge(challenge_type, user_perf):
     template = CHALLENGE_TEMPLATES[challenge_type]
     current_time = now()
     
-    # Check for existing active challenge
-    existing_challenge = Challenge.objects.filter(
+    # Check for ANY existing active challenge of this type
+    existing_challenges_count = Challenge.objects.filter(
         user=user_perf.user,
         challenge_type=challenge_type,
         is_automated=True,
         end_date__gt=current_time
-    )
+    ).count()
     
-    # If there's an existing challenge that's about to expire (less than 1 day left),
-    # we'll create a new one
-    create_new = not existing_challenge.exists() or \
-                 (existing_challenge.exists() and 
-                  (existing_challenge.first().end_date - current_time).days < 1)
-    
-    if create_new:
+    # Only create a new challenge if NO active challenges exist
+    if existing_challenges_count == 0:
         # Calculate target based on challenge type
         contributions = (user_perf.weekly_contributions 
-                       if challenge_type == 'WEEKLY' 
-                       else user_perf.monthly_contributions)
+                        if challenge_type == 'WEEKLY' 
+                        else user_perf.monthly_contributions)
         
         target = calculate_target(
             contributions,
@@ -85,7 +80,6 @@ def create_challenge(challenge_type, user_perf):
         
         return True
     return False
-
 
 def create_weekly_challenges():
     """Create weekly challenges for all users"""

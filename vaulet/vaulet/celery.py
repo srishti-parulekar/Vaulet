@@ -16,11 +16,11 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'create-weekly-challenges': {
         'task': 'challenges.tasks.create_scheduled_weekly_challenges',
-        'schedule': 120.0,  # 2 minutes
+        'schedule': crontab(day_of_week='mon', hour=0, minute=0),  # Once a week on Monday
     },
     'create-monthly-challenges': {
         'task': 'challenges.tasks.create_scheduled_monthly_challenges',
-        'schedule': 300.0,  # 5 minutes
+        'schedule': crontab(day_of_month='1', hour=0, minute=0),  # First day of month
     },
 }
 

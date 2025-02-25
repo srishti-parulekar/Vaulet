@@ -1,3 +1,4 @@
+#views 
 from django.shortcuts import render
 from transactions.models import Transaction
 from .serializers import ChallengeSerializer
@@ -55,8 +56,6 @@ class ChallengeListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Ensure user has challenges before listing them
-        call_command('check_create_challenges')
         
         # Get all challenges for the logged-in user
         user = request.user
