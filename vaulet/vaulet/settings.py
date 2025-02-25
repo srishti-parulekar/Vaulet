@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'transactions',
     'expenses',
     'vaults',
+    'chatbot'
 ]
 # CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 # CELERY_TASK_TRACK_STARTED = True
