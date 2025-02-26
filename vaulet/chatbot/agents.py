@@ -11,9 +11,10 @@ gemini_api_key = os.getenv("GEMINI_API_KEY")
 
 engine = create_engine("sqlite:///./db.sqlite3")
 
-chat_bot_agent = Agent(
+def get_team_agent():
+    chat_bot_agent = Agent(
     name="ChatBot AI agent",
-    role="Act like a helpful and informative chatbot that solves user queries",
+    role="You are an expert at resolving people's queries in a charming way. Act like a helpful and informative chatbot that solves user queries",
     model=Gemini(id="gemini-1.5-flash", api_key=gemini_api_key),
     instructions=[
         "Vaulet is a gamified budgeting app for expense management and financial goal achievement.",
@@ -37,9 +38,10 @@ chat_bot_agent = Agent(
     ],
     show_tool_calls=True,
     markdown=True,
-)
+    add_chat_history_to_messages=True,
+    )
 
-sql_agent = Agent(
+    sql_agent = Agent(
     name="SQL Agent",
     model=Gemini(id="gemini-1.5-flash", api_key=gemini_api_key),
     instructions=[
@@ -86,9 +88,9 @@ sql_agent = Agent(
     tools=[SQLTools(db_engine=engine)],
     add_chat_history_to_messages=True,
     retries=3,
-)
+    )
 
-web_search_agent = Agent(
+    web_search_agent = Agent(
     name="Web Search Agent",
     role="Search the web for relevant information.",
     model=Gemini(id="gemini-1.5-flash", api_key=gemini_api_key),
@@ -105,9 +107,10 @@ web_search_agent = Agent(
     ],
     show_tool_calls=True,
     markdown=True,
-)
-
-agent_team = Agent(
+    add_chat_history_to_messages=True,
+    )
+    
+    agent_team = Agent(
     team=[chat_bot_agent, sql_agent, web_search_agent],
     model=Gemini(id="gemini-1.5-flash", api_key=gemini_api_key),
     instructions=[
@@ -119,23 +122,31 @@ agent_team = Agent(
     ],
     show_tool_calls=True,
     markdown=True,
+    add_chat_history_to_messages=True,
 )
-
-
-# agent_team.print_response(
-#     "i am user 12. tell me how i can plan my transactions better. give budgeting tips too.",
-#     stream=True,
-# )
-
-def get_team_agent():
-    # Initialize and return your agent_team
-    chat_bot_agent = Agent(...)
-    sql_agent = Agent(...)
-    web_search_agent = Agent(...)
-    
-    agent_team = Agent(
-        team=[chat_bot_agent, sql_agent, web_search_agent],
-        # rest of your configuration
-    )
     
     return agent_team
+
+
+def get_agent_response(agent, message):
+
+    full_response = agent.run(message)
+    
+    # Check if response has messages attribute
+    if hasattr(full_response, "messages"):
+        # Find the last model message
+        for msg in reversed(full_response.messages):
+            if msg.role == 'model':
+                return msg.content
+    
+    # Fallback to string representation with error handling
+    try:
+        if hasattr(full_response, "response"):
+            response_text = full_response.response
+            if isinstance(response_text, str) and "content=" in response_text:
+                # Parse the content from the response string
+                content_part = response_text.split("content='", 1)[1]
+                return content_part.split("'", 1)[0].replace("\\n", "\n")
+        return str(full_response)
+    except Exception as e:
+        return f"Error extracting response: {str(e)}"
