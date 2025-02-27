@@ -27,12 +27,10 @@ const Chat = () => {
     return savedHistory ? JSON.parse(savedHistory) : [];
   });
   
-  // Refs
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
   const abortControllerRef = useRef(null);
   
-  // Save messages and conversation history to localStorage when they change
   useEffect(() => {
     localStorage.setItem('chatMessages', JSON.stringify(messages.slice(-50))); // Only save last 50 messages
   }, [messages]);
@@ -41,12 +39,10 @@ const Chat = () => {
     localStorage.setItem('conversationHistory', JSON.stringify(conversationHistory));
   }, [conversationHistory]);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  // Detect when user scrolls up to show scroll-to-bottom button
   useEffect(() => {
     const handleScroll = () => {
       if (!chatContainerRef.current) return;
@@ -87,8 +83,9 @@ const Chat = () => {
   };
   
   const handleUserIdChange = (e) => {
-    setUserId(e.target.value);
-    localStorage.setItem('userId', e.target.value);
+    const newUserId = e.target.value;
+    setUserId(newUserId);
+    localStorage.setItem('userId', newUserId);
     // Clear conversation history when user ID changes
     setConversationHistory([]);
   };
@@ -102,6 +99,7 @@ const Chat = () => {
       localStorage.removeItem('conversationHistory');
     }
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (input.trim() === '') return;
@@ -116,10 +114,14 @@ const Chat = () => {
     
     setMessages(prev => [...prev, userMessage]);
     
+    // Add user ID context to the first message in conversation if it exists
+    // This ensures the user ID context is preserved in the conversation history
+    let userContent = input.trim();
+    
     // Store this message in conversation history
     const updatedHistory = [...conversationHistory, {
       role: 'user',
-      content: input.trim()
+      content: userContent
     }];
     setConversationHistory(updatedHistory);
     
@@ -148,7 +150,7 @@ const Chat = () => {
       // Make API request with abort signal and include conversation history
       const response = await api.post('/api/chatbot/chat/', {
         message: currentInput,
-        userId: userId || undefined,
+        userId: userId.trim() || null, // Send null instead of undefined if empty
         conversationHistory: updatedHistory.slice(-10) // Send last 10 exchanges to avoid too large payloads
       }, {
         signal: abortControllerRef.current.signal
@@ -199,7 +201,7 @@ const Chat = () => {
     }
   };
 
- const formatTimestamp = (timestamp) => {
+  const formatTimestamp = (timestamp) => {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
@@ -212,7 +214,7 @@ const Chat = () => {
   }, [handleSubmit]);
 
   return (
-    <>
+    <div >
       <div className="chat-header">
         <div className="chat-header-icon" style={{backgroundColor:"#ffffff"}}>
           <Bot size={24} />
@@ -229,16 +231,7 @@ const Chat = () => {
           >
             <RefreshCw size={18} />
           </button>
-          <div className="user-id-container">
-            <input
-              type="text"
-              value={userId}
-              onChange={handleUserIdChange}
-              placeholder="User ID (optional)"
-              className="user-id-input"
-              aria-label="User ID input"
-            />
-          </div>
+          
         </div>
       </div>
       
@@ -304,7 +297,13 @@ const Chat = () => {
           <Send size={20} />
         </button>
       </form>
-    </>
+      
+      {userId && (
+        <div className="user-info-indicator">
+          Connected as User: {userId}
+        </div>
+      )}
+    </div>
   );
 };
 
