@@ -2,60 +2,73 @@ import "./LandingPage.css";
 import dataImage from "../../assets/data.png";
 import winImage from "../../assets/win.png";
 import ideaImage from "../../assets/idea.png";
-import walletImage from "../../assets/walletNoBG.png"
+import walletImage from "../../assets/walletNoBG.png";
 import { useNavigate } from "react-router-dom";
-import "./LandingPage.css"
+import "./LandingPage.css";
+import { Link as ScrollLink } from "react-scroll";
+
 const LandingPage = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleLoginSubmit = () => {
-        navigate('/login');
-    };
+  const handleLoginSubmit = () => {
+    navigate("/login");
+  };
 
-    const handleRegisterSubmit = () => {
-        navigate('/register');
-    }
+  const handleRegisterSubmit = () => {
+    navigate("/register");
+  };
   return (
     <div className="landing-page">
       <header>
-        <nav style={{padding: "0.65rem"}}>
+        <nav style={{ padding: "0.65rem" }}>
           <div className="logo">
             {/* <img src={walletImage} alt="wallet"
-            style={{ width: "70px", height: "auto"}}/> */}
-            <h3 className="hero-title--gradient" style={{fontSize: "2rem"}}>Vaulet</h3></div>
+      style={{ width: "70px", height: "auto"}}/> */}
+            <h3 className="hero-title--gradient" style={{ fontSize: "2rem" }}>
+              Vaulet
+            </h3>
+          </div>
           <ul className="nav-links">
             <li>
-              <a href="#features">Features</a>
+              <ScrollLink to="features" smooth={true} duration={500}>
+                Features
+              </ScrollLink>
             </li>
             <li>
-              <a href="#how-it-works">How It Works</a>
+              <ScrollLink to="how-it-works" smooth={true} duration={500}>
+                How It Works
+              </ScrollLink>
             </li>
             <li>
-              <a href="#testimonials">Testimonials</a>
+              <ScrollLink to="testimonials" smooth={true} duration={500}>
+                Testimonials
+              </ScrollLink>
             </li>
             <li>
-              <a onClick={handleLoginSubmit} style={{color: "#394b3c"}}>LOGIN</a>
+              <a onClick={handleLoginSubmit} style={{ color: "#394b3c" }}>
+                LOGIN
+              </a>
             </li>
           </ul>
         </nav>
       </header>
-
       <main>
         <div className="topBlur"></div>
         <div className="bottomBlur"></div>
         <section className="hero">
-  <h1 className="hero-title">
-    Make savings fun with,
-    <br />
-    <span className="hero-title--gradient">Vaulet.</span>
-  </h1>
-  <p className="hero-subtitle">
-    Gamify your budgeting process and achieve your financial goals.
-  </p>
-  <button className="cta-button" onClick={handleRegisterSubmit}>Get Started</button>
-  {/* <div className="bottom-fade"></div> */}
-</section>
-
+          <h1 className="hero-title">
+            Make savings fun with,
+            <br />
+            <span className="hero-title--gradient">Vaulet.</span>
+          </h1>
+          <p className="hero-subtitle">
+            Gamify your budgeting process and achieve your financial goals.
+          </p>
+          <button className="cta-button" onClick={handleRegisterSubmit}>
+            Get Started
+          </button>
+          {/* <div className="bottom-fade"></div> */}
+        </section>
 
         <section id="features" className="features">
           <h1 className="titles">Key Features</h1>

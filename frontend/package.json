@@ -27,6 +27,7 @@
     "react-icons": "^5.4.0",
     "react-rewards": "^2.1.0",
     "react-router-dom": "^7.1.1",
+    "react-scroll": "^1.9.3",
     "reactjs-popup": "^2.0.6"
   },
   "devDependencies": {
