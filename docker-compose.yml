@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./vaulet
+    container_name: vaulet_backend
+    restart: always
+    volumes:
+      - ./vaulet:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    networks:
+      - vaulet_network
+
+  frontend:
+    build: ./frontend
+    container_name: vaulet_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - vaulet_network
+
+  redis:
+    image: redis:alpine
+    container_name: vaulet_redis
+    restart: always
+    networks:
+      - vaulet_network
+
+  celery_worker:
+    build: ./vaulet
+    container_name: vaulet_celery_worker
+    restart: always
+    command: celery -A vaulet worker -l info
+    volumes:
+      - ./vaulet:/app
+    env_file:
+      - .env
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - vaulet_network
+
+  celery_beat:
+    build: ./vaulet
+    container_name: vaulet_celery_beat
+    restart: always
+    command: celery -A vaulet beat -l info
+    volumes:
+      - ./vaulet:/app
+    env_file:
+      - .env
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - vaulet_network
+
+  phidata:
+    build: 
+      context: ./vaulet
+      dockerfile: Dockerfile.phidata
+    container_name: vaulet_phidata
+    restart: always
+    volumes:
+      - ./vaulet:/app
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    networks:
+      - vaulet_network
+
+networks:
+  vaulet_network:
+    driver: bridge
+
+volumes:
+  static_volume:
+  media_volume:

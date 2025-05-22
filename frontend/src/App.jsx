@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -23,7 +23,7 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path="/home" element={
             <ProtectedRoutes>
@@ -40,7 +40,7 @@ function App() {
 
         </Routes>
 
-      </BrowserRouter>
+      </HashRouter>
     </>
   )
 }
