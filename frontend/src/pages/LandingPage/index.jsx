@@ -2,7 +2,7 @@ import "./LandingPage.css";
 import dataImage from "../../assets/data.png";
 import winImage from "../../assets/win.png";
 import ideaImage from "../../assets/idea.png";
-import walletImage from "../../assets/walletNOBG.png"
+import walletImage from "../../assets/walletNoBG.png"
 import { useNavigate } from "react-router-dom";
 import "./LandingPage.css"
 const LandingPage = () => {
