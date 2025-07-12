@@ -1,1 +1,4 @@
 .env
+datadump.json
+__pycache__/
+*.py[cod]

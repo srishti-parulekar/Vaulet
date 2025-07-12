@@ -13,11 +13,12 @@ from django.shortcuts import get_object_or_404
 
 class CreateUserView(generics.CreateAPIView):
     # specifies the list of objects we need to check to not create preexisting user
-    queryset = User.objects.all
+    queryset = User.objects.all()
     # tells the data what kind of data we need to accept
     serializer_class = UserSerializer
     # who can access
     permission_classes = [AllowAny]
+    authentication_classes = []
 
 
 class PersonalVaultCreateView(generics.UpdateAPIView):
