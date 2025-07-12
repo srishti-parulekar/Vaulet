@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ['python311', 'postgresql', 'nodejs-18_x']
+
+[phases.install]
+cmds = [
+  "pip install --upgrade pip",
+  "pip install -r vaulet/requirements.txt"
+]
+
+[phases.build]
+cmds = []
+
+[phases.start]
+cmd = "python vaulet/manage.py runserver 0.0.0.0:$PORT"
