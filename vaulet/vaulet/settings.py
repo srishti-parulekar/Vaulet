@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
+import dj_database_url
 import os
 from celery.schedules import crontab
 
@@ -150,15 +151,22 @@ WSGI_APPLICATION = "vaulet.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'vaulet-db',
+#         'USER': 'mishti',
+#         'PASSWORD': 'mishti123',
+#         'HOST': 'localhost',
+#         'PORT': '5433',
+#     }
+# }
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'vaulet-db',
-        'USER': 'mishti',
-        'PASSWORD': 'mishti123',
-        'HOST': 'localhost',
-        'PORT': '5433',
-    }
+    'default': dj_database_url.config(
+        default=os.environ["DATABASE_URL"]
+    )
 }
 
 

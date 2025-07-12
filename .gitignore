@@ -1,2 +1,4 @@
 .DS_Store
 vaulet/db.sqlite3
+__pycache__/
+*.py[cod]
