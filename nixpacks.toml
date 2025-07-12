@@ -1,12 +1,10 @@
 [phases.setup]
-nixPkgs = ['python311', 'postgresql', 'nodejs-18_x']
+nixPkgs = ['python311Full', 'postgresql', 'nodejs-18_x']
 
 [phases.install]
 cmds = [
-  "python3.11 -m ensurepip",
-  "python3.11 -m pip install --upgrade pip",
-  "python3.11 -m pip install -r requirements.txt"
+  "pip install -r requirements.txt"
 ]
 
 [start]
-cmd = "python3.11 manage.py runserver 0.0.0.0:$PORT"
+cmd = "python manage.py runserver 0.0.0.0:$PORT"
