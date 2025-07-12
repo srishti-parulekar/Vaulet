@@ -1,0 +1,7 @@
+.venv/
+.github/
+frontend/
+docker-compose.yml
+dump.rdb
+README.md
+.gitignore
