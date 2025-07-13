@@ -7,55 +7,62 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build and Deploy
     runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_DB: vaulet-db
-          POSTGRES_USER: mishti
-          POSTGRES_PASSWORD: mishti123
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Node
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          
-      - name: Install Dependencies
-        run: cd frontend && npm install
-        
-      - name: Build Project
-        run: cd frontend && npm run build
-        
-      - name: Upload artifact to enable deployment
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Upload Frontend Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: production-files
           path: ./frontend/dist
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install Backend Dependencies
+        run: |
+          pip install --no-cache-dir -r vaulet/requirements.txt
+
+      - name: Run Migrations and Collectstatic
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DJANGO_SETTINGS_MODULE: vaulet.settings
+        run: |
+          cd vaulet
+          python manage.py migrate
+          python manage.py collectstatic --noinput
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
+      - name: Download Frontend Artifact
         uses: actions/download-artifact@v4
         with:
           name: production-files
           path: ./frontend/dist
-          
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
