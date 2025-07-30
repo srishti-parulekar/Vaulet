@@ -32,11 +32,14 @@ services:
     buildCommand: |
       cd vaulet &&
       pip install --upgrade pip &&
+      pip install -r requirements.txt &&
       python manage.py collectstatic --noinput &&
-      pip install -r requirements.txt
+      python manage.py migrate
+
     startCommand: |
       cd vaulet &&
-      celery -A vaulet worker -l info
+      gunicorn --bind 0.0.0.0:$PORT vaulet.wsgi:application
+
     plan: free
     envVars:
       - key: DATABASE_URL
