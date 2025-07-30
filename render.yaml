@@ -32,6 +32,7 @@ services:
     buildCommand: |
       cd vaulet &&
       pip install --upgrade pip &&
+      python manage.py collectstatic --noinput &&
       pip install -r requirements.txt
     startCommand: |
       cd vaulet &&
