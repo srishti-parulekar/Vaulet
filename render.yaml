@@ -1,0 +1,78 @@
+services:
+  - type: web
+    name: vaulet-backend
+    env: python
+    buildCommand: |
+      cd vaulet &&
+      pip install --upgrade pip &&
+      pip install -r requirements.txt &&
+      python manage.py collectstatic --noinput &&
+      python manage.py migrate
+    startCommand: |
+      cd vaulet &&
+      gunicorn --bind 0.0.0.0:$PORT vaulet.wsgi:application
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: DATABASE_URL
+      - key: REDIS_URL
+        value: REDIS_URL
+      - key: DJANGO_SETTINGS_MODULE
+        value: vaulet.settings
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: SECRET_KEY
+        generateValue: true
+
+  - type: worker
+    name: vaulet-celery-worker
+    env: python
+    buildCommand: |
+      cd vaulet &&
+      pip install --upgrade pip &&
+      pip install -r requirements.txt
+    startCommand: |
+      cd vaulet &&
+      celery -A vaulet worker -l info
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: DATABASE_URL
+      - key: REDIS_URL
+        value: REDIS_URL
+      - key: DJANGO_SETTINGS_MODULE
+        value: vaulet.settings
+
+  - type: worker
+    name: vaulet-celery-beat
+    env: python
+    buildCommand: |
+      cd vaulet &&
+      pip install --upgrade pip &&
+      pip install -r requirements.txt
+    startCommand: |
+      cd vaulet &&
+      celery -A vaulet beat -l info
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: DATABASE_URL
+      - key: REDIS_URL
+        value: REDIS_URL
+      - key: DJANGO_SETTINGS_MODULE
+        value: vaulet.settings
+
+  - type: web
+    name: vaulet-frontend
+    env: static
+    buildCommand: |
+      cd frontend &&
+      npm install &&
+      npm run build
+    staticPublishPath: ./frontend/dist
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        value: https://vaulet-backend.onrender.com
